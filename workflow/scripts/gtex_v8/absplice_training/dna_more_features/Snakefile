@@ -1,0 +1,51 @@
+import os
+import yaml
+import pandas as pd
+from tqdm import tqdm
+from absplice_scripts.data.gtex_v8 import tissue_map, tissue_map_gene_expr
+
+
+rule absplice_dna_training_input:
+    input:
+        absplice_input = OUTPUT_DIR_SPLICING + config['absplice_training']['training_input']['dna'],
+        squirls = OUTPUT_DIR_SPLICING + config_static['splicing_pred']['pred_variant_level']['squirls'],
+        cadd_splice = OUTPUT_DIR_SPLICING + config_static['splicing_pred']['pred_variant_level']['cadd_splice'],
+        mtsplice = OUTPUT_DIR_SPLICING + config_static['splicing_pred']['pred_variant_level']['mtsplice'],
+        spliceai_splicemap = OUTPUT_DIR_SPLICING + config_static['splicing_pred']['pred_variant_level']['spliceai_splicemap']['gtex_splicemaps'],
+        spliceai_splicemap_ref_psi = OUTPUT_DIR_SPLICING + config_static['splicing_pred']['pred_variant_level']['spliceai_splicemap_ref_psi']['gtex_splicemaps'],
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 16000,
+    params:
+        tissue = '{tissue}',
+        vcf_id = '{vcf_id}',
+        event_filter = '{event_filter}',
+    output:
+        absplice_input = OUTPUT_DIR_SPLICING + config['absplice_training_more_features']['training_input']['dna']
+    script:
+        "./absplice_combine_training_input_more_features.py"
+        
+        
+rule absplice_dna_training_input_subset:
+    input:
+        absplice_input = OUTPUT_DIR_SPLICING + config['absplice_training_more_features']['training_input']['dna']
+    params:
+        tissue = '{tissue}',
+        vcf_id = '{vcf_id}',
+        event_filter = '{event_filter}',
+    output:
+        absplice_input = OUTPUT_DIR_SPLICING + config['absplice_training_more_features']['training_input_subset']['dna']
+    script:
+        "./absplice_combine_training_input_subset_dna.py"
+        
+        
+rule absplice_dna_input_complete:
+    input:
+        absplice_input = expand(OUTPUT_DIR_SPLICING + config['absplice_training_more_features']['training_input_subset']['dna'],
+                                tissue=config['gtex_tissues'], vcf_id=wildcard_vcf_id, event_filter='{event_filter}')
+    params:
+        event_filter = '{event_filter}',
+    output:
+        absplice_input = OUTPUT_DIR_SPLICING + config['absplice_training_more_features']['training_input_complete']['dna']
+    run:
+        df = pd.concat([pd.read_csv(i) for i in tqdm(input.absplice_input)])
+        df.to_csv(output.absplice_input, index=False)

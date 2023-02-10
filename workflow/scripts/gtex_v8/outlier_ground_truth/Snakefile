@@ -1,0 +1,89 @@
+def DROP_path_junction_anno(wildcards):
+    df_anno = pd.read_csv(config['DROP']['tissue_map'])
+    tissue_map = dict(zip(df_anno['tissue'], df_anno['tissue_DROP']))
+    return config['DROP']['outlier_ground_truth_all'] + tissue_map[wildcards['tissue']] + '/results_per_junction.tsv'
+
+##==================================OUTLIER GROUND TRUTH========================================= 
+# Multiple tissues
+rule outlier_multiple_tissues:
+    input:
+        outliers_signif = expand(OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['gene_junction_signif'],
+                                 tissue=config['gtex_tissues']),
+        sample_anno = config['DROP']['sample_annotation'],
+        tissue_map = config['DROP']['tissue_map'],
+    params:
+        tissues = config['gtex_tissues'],
+    output:
+        outlier_multiple_tissues = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outliers_multiple_tissues']['gene_level'],
+        outlier_multiple_tissues_junction_level = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outliers_multiple_tissues']['junction_level'],
+    script:
+        "./outlier_multiple_tissues.py"
+
+
+rule outlier_var_dist_variant_centric:
+    input:
+        count_table_annotation = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['count_table']['with_annotation'],
+        outliers_signif = OUTPUT_DIR_OUTLIER+ config_static['outlier_ground_truth']['combine_gene_junction']['gene_junction_signif'],
+        rare_vars = OUTPUT_DIR_VCF_ANNO + config_static['vcf_annotation']['rare_vars']['qual_filtered'],
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 128000,
+    output:
+        variant_outlier_dist = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['variant_outlier_dist']
+    script:
+        "./outlier_var_dist_variant_centric.py"
+        
+        
+rule outlier_replication_enrichment:
+    input:
+        variant_outlier_dist = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['variant_outlier_dist'],
+        outlier_multiple_tissues_junction_level = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outliers_multiple_tissues']['junction_level'],
+    output:
+        variant_outlier_dist_multiple_tissues = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['variant_outlier_dist_multiple_tissues'],
+    script:
+        "./outlier_replication_enrichment.py"
+        
+        
+# Outlier outcome
+rule outliers_outcome:
+    input:
+        junction_level = DROP_path_junction_anno,
+        sample_map = config['DROP']['sample_annotation'],
+        count_table_with_annotation = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['count_table']['with_annotation'],
+        outliers_signif = OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['gene_junction_signif']
+    params:
+        tissue_DROP = tissue_DROP,
+        key_assay = config['filtering_params']['count_table']['key_assay'],
+        value_assay = config['filtering_params']['count_table']['value_assay'],
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 32000,
+        threads = 1
+    output:
+        outlier_outcome = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outlier_outcome']['gene_junction_signif']
+    script:
+        "./outliers_junction_level_outcome.py"
+        
+            
+rule outliers_with_outlier_outcome:
+    input:
+        outlier_outcome = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outlier_outcome']['gene_junction_signif'],
+        variant_outlier_dist = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['variant_outlier_dist'],
+    output:
+        outliers_with_annotation = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outlier_outcome']['parts_rare_var_dist_variant_level'],
+    script:
+        "./outliers_with_outlier_outcome.py"
+        
+        
+rule outliers_with_outlier_outcome_postprocess:
+    input:
+        outliers = OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['variant_nearest_outlier']['parts_rare_var_dist_variant_level'],
+        outliers_with_annotation = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outlier_outcome']['parts_rare_var_dist_variant_level'],
+    output:
+        outliers_all = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outlier_outcome']['ground_truth_benchmark'],
+    script:
+        "./outliers_with_outlier_outcome_postprocess.py"
+        
+
+        
+        
+
+        

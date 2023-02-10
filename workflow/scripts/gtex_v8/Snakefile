@@ -1,0 +1,69 @@
+import os
+import yaml
+SNAKEMAKE_DIR = os.path.dirname(workflow.snakefile)
+
+# Read static config file (contains folder structure of splicing predictions)
+config_static_path = f"{SNAKEMAKE_DIR}/../../config/config_static_structure.yaml"
+with open(config_static_path, "r") as fd:
+    config_static = yaml.safe_load(fd)
+    
+# Read provided file config (contains precomputed spliceai db etc.)
+config_precomputed_path = f"{SNAKEMAKE_DIR}/../../config/config_provided_files.yaml"
+with open(config_precomputed_path, "r") as fd:
+    config_precomputed = yaml.safe_load(fd)
+
+# Read config from dataset (user can change accordingly)
+configfile: "./../../config/config_gtex_v8.yaml"
+wildcard_vcf_id = config['chroms']
+  
+OUTPUT_DIR_JUNCTION_ANNO = config['output_dir']['junction_annotation']
+OUTPUT_DIR_SPLICING = config['output_dir']['splicing_preds']
+OUTPUT_DIR_OUTLIER = config['output_dir']['outliers']
+OUTPUT_DIR_VCF_ANNO = config['output_dir']['vcf_annotation']
+OUTPUT_DIR_BENCHMARK = config['output_dir']['benchmark']
+
+# VCF annotation
+include: "../common/vcf_annotation/snakemake_scripts/vcf_annotation.smk"
+# SpliceMap
+include: "./junction_annotation/gtex_v8_generate_gene_tpm.smk"
+include: "../common/junction_annotation/snakemake_scripts/splicemap_generate.smk"
+# Splicing predictions
+include: "../common/splicing_pred/snakemake_scripts/splicing_pred_baseline_models.smk"
+include: "../common/splicing_pred/snakemake_scripts/splicing_pred_gtex_splicemaps.smk"
+# Splicing predictions (gene level aggregation)
+include: "../common/splicing_result/snakemake_scripts/splicing_result_baseline_models.smk"
+include: "../common/splicing_result/snakemake_scripts/splicing_result_gtex_splicemaps_gene_level.smk"
+include: "../common/splicing_result/snakemake_scripts/splicing_result_gtex_splicemaps_variant_level.smk"
+# Outlier ground truth
+include: "../common/outlier_ground_truth/snakemake_scripts/outlier_ground_truth.smk"
+include: "../gtex_v8/outlier_ground_truth/Snakefile"
+# AbSplice training
+include: "../gtex_v8/absplice_training/dna/absplice_training_dna.smk"
+include: "../gtex_v8/absplice_training/rna/absplice_training_rna_single_cat.smk"
+include: "../gtex_v8/absplice_training/rna/absplice_training_rna_all_cats.smk"
+# Benchmark
+include: "../common/benchmark/snakemake_scripts/benchmark_construct_universe.smk"
+include: "../gtex_v8/benchmark/dna/benchmark_dna.smk"
+include: "../gtex_v8/benchmark/dna/variant_outlier_categories/Snakefile"
+include: "../gtex_v8/benchmark/rna/benchmark_rna.smk"
+
+
+rule all:
+    input:
+        rules.gtex_v8_generate_tissue_map.output,  
+        
+        # Generate all SpliceMaps
+        rules.all_generate_splicemap.input,
+        
+        # AbSplice training
+        rules.all_absplice_training_dna.input,
+        rules.all_absplice_training_rna_single_cat.input,
+        rules.all_absplice_training_rna_all_cats.input,
+        
+        # Variant and outlier outcome categories
+        rules.all_variant_and_outlier_categories.input,
+        
+        # Benchmark
+        rules.all_benchmark_dna.input,
+        rules.all_benchmark_rna.input
+

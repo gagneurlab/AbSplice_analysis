@@ -1,0 +1,39 @@
+import os
+import yaml
+SNAKEMAKE_DIR = os.path.dirname(workflow.snakefile)
+
+# Read static config file (contains folder structure of splicing predictions)
+config_static_path = f"{SNAKEMAKE_DIR}/../../config/config_static_structure.yaml"
+with open(config_static_path, "r") as fd:
+    config_static = yaml.safe_load(fd)
+    
+# Read provided file config (contains precomputed spliceai db etc.)
+config_precomputed_path = f"{SNAKEMAKE_DIR}/../../config/config_provided_files.yaml"
+with open(config_precomputed_path, "r") as fd:
+    config_precomputed = yaml.safe_load(fd)
+
+# Read config from dataset (user can change accordingly)
+configfile: "./../../config/config_gtex_v7.yaml"
+wildcard_vcf_id = config['chroms']
+  
+OUTPUT_DIR_JUNCTION_ANNO = config['output_dir']['junction_annotation']
+OUTPUT_DIR_SPLICING = config['output_dir']['splicing_preds']
+OUTPUT_DIR_OUTLIER = config['output_dir']['outliers']
+OUTPUT_DIR_VCF_ANNO = config['output_dir']['vcf_annotation']
+OUTPUT_DIR_BENCHMARK = config['output_dir']['benchmark']
+
+# common snakemake rules
+# VCF annotation
+include: "../../snakemake_scripts/common/vcf_annotation/vcf_annotation.smk"
+# SpliceMap
+include: "./junction_annotation/gtex_v7_generate_gene_tpm.smk"
+include: "../../snakemake_scripts/common/junction_annotation/junction_annotation_coding_genes.smk"
+include: "../../snakemake_scripts/common/junction_annotation/junction_annotation_count_table.smk"
+include: "../../snakemake_scripts/common/junction_annotation/splicemap_train_test.smk"
+include: "../../snakemake_scripts/common/junction_annotation/splicemap_generate.smk"
+
+rule all:
+    input:
+        rules.gtex_v7_generate_tissue_map.output,
+        expand(rules.generate_splicemap.output,
+               tissue=config['gtex_tissues']),

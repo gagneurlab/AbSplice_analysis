@@ -1,0 +1,296 @@
+# Path to adapt by user
+output_dir:
+    junction_annotation: root_dir/gtex_v8/junction_annotation/
+    splicing_preds: root_dir/gtex_v8/splicing_predictions/
+    outliers: root_dir/gtex_v8/outlier_ground_truth/
+    vcf_annotation: root_dir/gtex_v8/vcf_annotation/
+    benchmark: root_dir/gtex_v8/benchmark/    
+    
+DROP:
+    outlier_ground_truth_all: root_dir/gtex_v8/processed_results/aberrant_splicing/results/gencode38/fraser/
+    tissue_map: root_dir/gtex_v8/tissue_map_DROP.csv
+    sample_annotation: root_dir/gtex_v8/sample_annotation.tsv
+    version: 'gencode38'
+    splicemap:
+        working_dir: root_dir/gtex_v8/processed_data/aberrant_splicing/datasets/
+    outlier:
+        splicing:
+            working_dir: root_dir/gtex_v8/processed_results/aberrant_splicing/datasets/ 
+        expression:
+            working_dir: root_dir/gtex_v8/processed_results/aberrant_expression/
+
+genome: 'hg38'
+fasta: root_dir/genomes/human/hg38/gencode.v38/GRCh38.primary_assembly.genome.fa
+gtf: root_dir/genomes/human/hg38/gencode.v38/gencode.v38.annotation.gtf
+
+vcf: root_dir/vcf_processing/gtex_v8/vcf_normalized/{vcf_id}.vcf.gz
+
+vep_anno: root_dir/gtex_v8_hg38/VEP.parquet/rare_variants.vcf.parquet/chrom={vcf_id}
+
+gene_expression: 
+  raw: root_dir/common/hg38/gene_expression_tpm/raw_median_tpm.gz
+  
+
+# Not to change by user
+filtering_params:
+    vcf:
+        format_fields: ['GT','GQ','DP','AD']
+        remove_chr: False
+        min_GQ: 99
+        min_DP_ALT: 10
+        filter_long_indels: 10
+    count_table:
+        update_samples: True
+        key_assay: 'RNA_ID'
+        value_assay: 'INDIVIDUAL_ID'
+        subset_chroms: False
+        infer_strand: False
+    splicemap:
+        use_faster: True
+        percentile: 95
+        percentile_min_read: 1
+        median_cutoff: 1
+    outliers:
+        padjustGene_cutoff: 0.1
+        padjust_junction_cutoff: 0.05
+        totalCounts_cutoff: 20
+        delta_psi_cutoff: 0.3
+        outlier_type: 'psi5__psi3__theta'
+        num_junction_outliers_per_samples: 15
+    outliers_expression:
+        padjust: 0.05
+    absplice:
+        median_n_cutoff: 10
+        tpm_cutoff: 1
+        count_cat_cutoff: 20
+
+
+outlier_ground_truth:
+    combine_gene_junction:
+        outliers_multiple_tissues:
+            gene_level: combine_gene_junction/outliers_multiple_tissues/outliers_multiple_tissues_gene_level.csv
+            junction_level: combine_gene_junction/outliers_multiple_tissues/outliers_multiple_tissues_junction_level.csv
+        variant_outlier_dist: combine_gene_junction/variant_outlier_dist/{vcf_id}_tissue={tissue}_variant_outlier_dist.csv
+        variant_outlier_dist_multiple_tissues: combine_gene_junction/variant_outlier_dist_multiple_tissues/{vcf_id}_tissue={tissue}_variant_outlier_dist_multiple_tissues.csv
+        outlier_outcome: 
+            gene_junction_signif: combine_gene_junction/outlier_outcome/gene_junction_signif/{tissue}.csv
+            parts_rare_var_dist_variant_level: combine_gene_junction/outlier_outcome/rare_var_dist_variant_level/{vcf_id}_tissue={tissue}_outliers_with_outcome.csv
+            ground_truth_benchmark: combine_gene_junction/outlier_outcome/ground_truth_benchmark/{vcf_id}_tissue={tissue}_outliers_with_outcome.csv
+            
+tissues_cat:
+    - Cells_Cultured_fibroblasts
+    - Whole_Blood
+    - Cells_EBV_transformed_lymphocytes
+
+cat_pairing:
+    - 'Cells_Cultured_fibroblasts'
+    - 'Whole_Blood'
+    - 'Cells_EBV_transformed_lymphocytes'
+    - 'Cells_Cultured_fibroblasts__Whole_Blood'
+
+spliceai:
+    lookup_only: False
+   
+method: 'kn'
+event_filter: 'median_cutoff'
+gtex_version: 'gtex_v8'
+
+absplice_params:
+    classifier:
+        - interpretml
+    abs_features:
+        - False
+    feature_string_dna:
+        - delta_logit_psi__delta_psi__delta_score__splice_site_is_expressed
+    feature_string_rna:
+        - delta_logit_psi__delta_psi__delta_psi_cat__delta_score__pValueGene_g_minus_log10__splice_site_is_expressed
+    
+gtex_tissues:
+    - Adipose_Subcutaneous
+    - Adipose_Visceral_Omentum
+    - Adrenal_Gland
+    - Artery_Aorta
+    - Artery_Coronary
+    - Artery_Tibial
+    - Brain_Amygdala
+    - Brain_Anterior_cingulate_cortex_BA24
+    - Brain_Caudate_basal_ganglia
+    - Brain_Cerebellar_Hemisphere
+    - Brain_Cerebellum
+    - Brain_Cortex
+    - Brain_Frontal_Cortex_BA9
+    - Brain_Hippocampus
+    - Brain_Hypothalamus
+    - Brain_Nucleus_accumbens_basal_ganglia
+    - Brain_Putamen_basal_ganglia
+    - Brain_Spinal_cord_cervical_c_1
+    - Brain_Substantia_nigra
+    - Breast_Mammary_Tissue
+    - Cells_Cultured_fibroblasts
+    - Cells_EBV_transformed_lymphocytes
+    - Colon_Sigmoid
+    - Colon_Transverse
+    - Esophagus_Gastroesophageal_Junction
+    - Esophagus_Mucosa
+    - Esophagus_Muscularis
+    - Heart_Atrial_Appendage
+    - Heart_Left_Ventricle
+    - Kidney_Cortex
+    - Liver
+    - Lung
+    - Minor_Salivary_Gland
+    - Muscle_Skeletal
+    - Nerve_Tibial
+    - Ovary
+    - Pancreas
+    - Pituitary
+    - Prostate
+    - Skin_Not_Sun_Exposed_Suprapubic
+    - Skin_Sun_Exposed_Lower_leg
+    - Small_Intestine_Terminal_Ileum
+    - Spleen
+    - Stomach
+    - Testis
+    - Thyroid
+    - Uterus
+    - Vagina
+    - Whole_Blood
+
+chroms:
+  - 'chr1'
+  - 'chr2'
+  - 'chr3'
+  - 'chr4'
+  - 'chr5'
+  - 'chr6'
+  - 'chr7'
+  - 'chr8'
+  - 'chr9'
+  - 'chr10'
+  - 'chr11'
+  - 'chr12'
+  - 'chr13'
+  - 'chr14'
+  - 'chr15'
+  - 'chr16'
+  - 'chr17'
+  - 'chr18'
+  - 'chr19'
+  - 'chr20'
+  - 'chr21'  
+  - 'chr22'
+  - 'chrX'
+
+
+absplice_training:
+    training_input: 
+        dna: raw_pred/absplice/absplice_training/training_input/{tissue}_combined_input_dna_{vcf_id}.csv
+        rna:
+            single_cat: raw_pred/absplice/absplice_training/training_input/rna/single_cat/{tissue}_combined_input_rna_{vcf_id}_cat={tissue_cat}.csv
+            all_cats: raw_pred/absplice/absplice_training/training_input/rna/all_cats/{tissue}_combined_input_rna_{vcf_id}_all_cats.csv
+    training_input_subset: 
+        dna: raw_pred/absplice/absplice_training/training_input_subset/{tissue}_combined_input_dna_{vcf_id}.csv
+        rna:
+            single_cat: raw_pred/absplice/absplice_training/training_input_subset/rna/single_cat/{tissue}_combined_input_rna_{vcf_id}_cat={tissue_cat}.csv
+            all_cats: raw_pred/absplice/absplice_training/training_input_subset/rna/all_cats/{tissue}_combined_input_rna_{vcf_id}_all_cats.csv
+    training_input_complete: 
+        dna: raw_pred/absplice/absplice_training/training_input_complete/combined_input_dna.csv
+        rna:
+            single_cat: raw_pred/absplice/absplice_training/training_input_complete/rna/single_cat/combined_input_rna_cat={tissue_cat}.csv
+            all_cats: raw_pred/absplice/absplice_training/training_input_complete/rna/all_cats/combined_input_rna_all_cats.csv
+        
+    preds:
+        dna: 
+            5_fold_crossval: raw_pred/absplice/absplice_training/5_fold_crossval/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+            whole_GTEx: raw_pred/absplice/absplice_training/whole_GTEx/classifier={classifier}/{feature_string}/abs_features={abs_features}/AbSplice_DNA_trained_on_whole_GTEx.pkl
+            gene_level: raw_pred/absplice/absplice_training/5_fold_crossval/pred_gene_level/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+            variant_level: raw_pred/absplice/absplice_training/5_fold_crossval/pred_variant_level/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+        rna:
+            single_cat:
+                5_fold_crossval: raw_pred/absplice/absplice_training/rna/single_cat/cat={tissue_cat}/5_fold_crossval/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+                whole_GTEx: raw_pred/absplice/absplice_training/rna/single_cat/cat={tissue_cat}/whole_GTEx/classifier={classifier}/{feature_string}/abs_features={abs_features}/AbSplice_RNA_trained_on_whole_GTEx.pkl
+                gene_level: raw_pred/absplice/absplice_training/rna/single_cat/cat={tissue_cat}/5_fold_crossval/pred_gene_level/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+            all_cats: 
+                5_fold_crossval: raw_pred/absplice/absplice_training/rna/all_cats/5_fold_crossval/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+                whole_GTEx: raw_pred/absplice/absplice_training/rna/all_cats/whole_GTEx/classifier={classifier}/{feature_string}/abs_features={abs_features}/AbSplice_RNA_trained_on_whole_GTEx.pkl
+                gene_level: raw_pred/absplice/absplice_training/rna/all_cats/5_fold_crossval/pred_gene_level/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+                variant_level: raw_pred/absplice/absplice_training/rna/all_cats/5_fold_crossval/pred_variant_level/classifier={classifier}/{feature_string}/abs_features={abs_features}/results_all.csv
+                
+                
+benchmark:
+    absplice_model_params: benchmark_results/classifier={classifier}/{feature_string_dna}/abs_features={abs_features}/
+    absplice_model_params_rna: benchmark_results/classifier={classifier}/{feature_string_dna}/{feature_string_rna}/abs_features={abs_features}/
+    combined_benchmark: 
+        gtex_splicemaps:
+            dna: combined_benchmark/gtex_splicemaps/dna/{vcf_id}_tissue={tissue}_combined_benchmark_dna.parquet
+            rna: combined_benchmark/gtex_splicemaps/rna/tissue_cat={tissue_cat}/{vcf_id}_tissue={tissue}_combined_benchmark_rna_cat={tissue_cat}.parquet
+                
+    performance:
+        gtex_splicemaps:
+            dna: 
+                all_tissues: 
+                    df: performance/gtex_splicemaps/dna/all_tissues/performance_all_tissues_df.csv
+                    aps: performance/gtex_splicemaps/dna/all_tissues/performance_all_tissues_aps.pkl
+                single_tissue: 
+                    df: performance/gtex_splicemaps/dna/single_tissue/performance_tissue={tissue}_df.csv
+                    aps: performance/gtex_splicemaps/dna/single_tissue/performance_tissue={tissue}_aps.pkl
+                across_tissues:
+                    boxplot_aps: performance/gtex_splicemaps/dna/across_tissues/performance_boxplot_aps.csv
+                thresholds:
+                    corresponding_thresholds: performance/gtex_splicemaps/dna/thresholds/corresponding_thresholds.csv
+                    thresholds_per_model: performance/gtex_splicemaps/dna/thresholds/thresholds_per_model.csv
+                    threshold_points_pr_curve: performance/gtex_splicemaps/dna/thresholds/threshold_points_pr_curve.csv
+            rna:
+                all_tissues: 
+                    df: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/all_tissues/performance_all_tissues_df.csv
+                    aps: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/all_tissues/performance_all_tissues_aps.pkl
+                single_tissue: 
+                    df: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/single_tissue/performance_tissue={tissue}_df.csv
+                    aps: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/single_tissue/performance_tissue={tissue}_aps.pkl
+                across_tissues:
+                    boxplot_aps: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/across_tissues/performance_boxplot_aps.csv
+                thresholds:
+                    corresponding_thresholds: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/corresponding_thresholds.csv
+                    thresholds_per_model: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/thresholds_per_model.csv
+                    threshold_points_pr_curve: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/threshold_points_pr_curve.csv
+                    
+                    
+benchmark_var_level:
+    absplice_model_params: benchmark_var_level/classifier={classifier}/{feature_string_dna}/abs_features={abs_features}/
+    universe: 
+        universe_with_vep: universe_with_vep/universe/{vcf_id}_tissue={tissue}_rare_variants_on_genes.csv
+    outliers:
+        outliers_with_annotation_all: outliers_with_annotation_all/{vcf_id}_tissue={tissue}_outliers_with_annotation.csv
+    benchmark:
+        parts: benchmark_parts/dna/{vcf_id}_tissue={tissue}_combined_benchmark_dna.parquet
+        performance: performance/dna/var_category={var_category}/outlier_category={outlier_category}/performance.csv
+        performance_outlier_category: performance_outlier_category/dna/var_category={var_category}/performance.csv
+        performance_variant_category: performance_variant_category/dna/outlier_category={outlier_category}/performance.csv
+        stats:
+            general: benchmark_stats/general/dna/var_category={var_category}/outlier_category={outlier_category}/benchmark_stats.csv
+            outlier_category: benchmark_stats/outlier_category/dna/var_category={var_category}/benchmark_stats.csv
+            variant_category: benchmark_stats/variant_category/dna/outlier_category={outlier_category}/benchmark_stats.csv
+            
+            
+outlier_categories:
+    - all
+    - any_psi5_psi3_change
+    - splicing_efficiency_change
+    - exonElongation 
+    - exonTruncation
+    - exonSkipping_all
+    - theta_decrease
+    - theta_increase
+    - psi_decrease
+    - psi_increase
+              
+var_categories:
+    - all
+    - splice_donor_variant
+    - splice_acceptor_variant
+    - splice_region_variant
+    - intron_variant
+    - exonic_variant
+
+ 
+             

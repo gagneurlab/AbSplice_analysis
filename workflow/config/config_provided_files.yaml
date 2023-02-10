@@ -1,0 +1,33 @@
+gene_id_to_name_mapping_raw: path_to_hugo_symbol_to_ENSG_mapping.tsv  
+
+gnomad:
+  maf_db: root_dir/{genome}/gnomAD_maf_db/rocksdb/maf.db
+  
+gene_expression_gtex: 
+  raw: root_dir/{genome}/gene_expression_tpm/raw_median_tpm.gz
+  all_tissues: root_dir/{genome}/gene_expression_tpm/all_tissues_tpm.csv
+  
+spliceai:
+  indel_vcf: root_dir/{genome}/SpliceAI/spliceai_scores/spliceai_scores.masked.indel.{genome}.vcf.gz
+  snv_vcf: root_dir/{genome}/SpliceAI/spliceai_scores/spliceai_scores.masked.snv.{genome}.vcf.gz
+  db: root_dir/{genome}/SpliceAI/spliceai.db
+
+gtex_tissue_map_main_tissue: root_dir/gtex_v8/tissue_map_main_tissue.csv
+
+gene_tpm_gtex: root_dir/gtex_v8/junction_annotation/gene_tpm.csv
+
+splicemap_gtex:
+    psi5: root_dir/{gtex_version}/junction_annotation/splicemap/{tissue}_splicemap_psi5.csv.gz
+    psi3: root_dir/{gtex_version}/junction_annotation/splicemap/{tissue}_splicemap_psi3.csv.gz
+        
+absplice:   
+    dna: root_dir/gtex_v8/splicing_predictions/raw_pred/absplice/absplice_training/whole_GTEx/classifier=interpretml/delta_logit_psi__delta_psi__delta_score__splice_site_is_expressed/abs_features=False/AbSplice_DNA_trained_on_whole_GTEx.pkl
+    rna: root_dir/gtex_v8/splicing_predictions/raw_pred/absplice/absplice_training/rna/all_cats/whole_GTEx/classifier=interpretml/delta_logit_psi__delta_psi__delta_score__splice_site_is_expressed/abs_features=False/AbSplice_RNA_trained_on_whole_GTEx.pkl
+
+absplice_matching_cutoffs_in_gtex: root_dir/gtex_v8/benchmark/benchmark_results/classifier=interpretml/delta_logit_psi__delta_psi__delta_score__splice_site_is_expressed/abs_features=False/performance/gtex_splicemaps/dna/thresholds/corresponding_thresholds.csv
+
+als_genes: root_dir/als_genes.csv
+
+CADD:
+    hg38: 
+        snv: root_dir/cadd/v1.6/GRCh38/whole_genome_SNVs.tsv.gz

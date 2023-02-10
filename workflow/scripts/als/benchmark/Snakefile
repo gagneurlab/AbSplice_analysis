@@ -1,0 +1,157 @@
+from absplice_scripts.utils.model_utils import *
+
+import pandas as pd
+df_anno = pd.read_csv(config['DROP']['sample_annotation'], sep='\t')
+df_anno = df_anno[~df_anno['VCF_ID'].isna()]
+samples = list(set(df_anno[df_anno['VCF_ID'].str.contains('CASE')]['VCF_ID']))
+
+
+rule als_jackknife_gtex_splicemaps:
+    input:
+        df_benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['gtex_splicemaps']['dna'], 
+                              vcf_id=wildcard_vcf_id, tissue='motor_neuron', gtex_tissue='Brain'),
+    params:
+        samples = samples,
+        outlier_column = 'outlier',
+        model_dict = model_dict_dna,
+        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
+    output:
+        auPRC = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['gtex_splicemaps']['dna'],
+        stats = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['stats']['gtex_splicemaps']['dna'],
+    script:
+        "../../../scripts/common/benchmark/jacknife_samples.py"
+        
+        
+rule als_jackknife_dataset_splicemap:
+    input:
+        df_benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dataset_splicemap']['dna'], 
+                              vcf_id=wildcard_vcf_id, tissue='motor_neuron'),
+    params:
+        samples = samples,
+        outlier_column = 'outlier',
+        model_dict = model_dict_dna,
+        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
+    output:
+        auPRC = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['dataset_splicemap']['dna'],
+        stats = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['stats']['dataset_splicemap']['dna'],
+    script:
+        "../../../scripts/common/benchmark/jacknife_samples.py"
+        
+        
+rule tp_preds_among_total_preds_dataset_splicemap:
+    input:
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dataset_splicemap']['dna'], 
+                           vcf_id=wildcard_vcf_id, tissue='motor_neuron'),
+    params:
+        model_dict = model_dict_dna,
+        model_cutoffs = model_cutoffs,
+        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
+        subset_samples = True,
+    output:
+        tp_among_all_preds_line = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['dataset_splicemap']['dna']['line'],
+        tp_among_all_preds_discrete_cutoff = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['dataset_splicemap']['dna']['discrete_cutoff']
+    notebook:
+        "../../../scripts/common/benchmark/tp_preds_among_total_preds.py" 
+        
+        
+rule tp_preds_among_total_preds_gtex_splicemaps:
+    input:
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['gtex_splicemaps']['dna'], 
+                           vcf_id=wildcard_vcf_id, tissue='motor_neuron', gtex_tissue='Brain'),
+    params:
+        model_dict = model_dict_dna,
+        model_cutoffs = model_cutoffs,
+        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
+        subset_samples = True,
+    output:
+        tp_among_all_preds_line = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['gtex_splicemaps']['dna']['line'],
+        tp_among_all_preds_discrete_cutoff = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['gtex_splicemaps']['dna']['discrete_cutoff']
+    notebook:
+        "../../../scripts/common/benchmark/tp_preds_among_total_preds.py" 
+        
+        
+# Proteomics      
+rule proteomics_outliers_prepare:
+    input:
+        results = config['proteomics']['full_results'],
+        gene_map = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['gene_map'],
+        sample_map = config['DROP']['sample_annotation'],
+    params:
+        key_assay = config['filtering_params']['count_table']['key_assay'],
+        value_assay = config['filtering_params']['count_table']['value_assay'],
+    output:
+        results_annotated = OUTPUT_DIR_PROTEOMICS + config['proteomics']['full_results_annotated'],
+    script:
+        './proteomics_outliers_prepare.py'
+        
+        
+rule proteomics_enrichment:
+    input:
+        proteomics = OUTPUT_DIR_PROTEOMICS + config['proteomics']['full_results_annotated'],
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['gtex_splicemaps']['dna'], 
+                           vcf_id=wildcard_vcf_id, tissue='motor_neuron', gtex_tissue='Brain'),
+    params:
+        model_cutoffs = model_cutoffs
+    output:
+        enrichment = OUTPUT_DIR_PROTEOMICS + config['proteomics']['enrichment'],
+        true_preds = OUTPUT_DIR_PROTEOMICS + config['proteomics']['true_preds'],
+    script:
+        './proteomics_enrichment.py'
+        
+        
+rule proteomics_enrichment_motor_neuron_splicemap:
+    input:
+        proteomics = OUTPUT_DIR_PROTEOMICS + config['proteomics']['full_results_annotated'],
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dataset_splicemap']['dna'], 
+                           vcf_id=wildcard_vcf_id, tissue='motor_neuron'),
+    params:
+        model_cutoffs = model_cutoffs
+    output:
+        enrichment = OUTPUT_DIR_PROTEOMICS + config['proteomics']['motor_neuron_splicemap']['enrichment'],
+        true_preds = OUTPUT_DIR_PROTEOMICS + config['proteomics']['motor_neuron_splicemap']['true_preds'],
+    script:
+        './proteomics_enrichment.py'
+        
+        
+# ALS known genes
+rule als_enrichment_als_genes_gtex_splicemaps:
+    input:
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['gtex_splicemaps']['dna'], 
+                           vcf_id=wildcard_vcf_id, tissue='motor_neuron', gtex_tissue='Brain'),
+        als_genes = config_precomputed['als_genes'],
+        coding_genes = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['coding_genes'],
+    params:
+        model_cutoffs = model_cutoffs,
+        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
+    output:
+        enrichment_als_genes = OUTPUT_DIR_BENCHMARK + config['als_known_genes']['gtex_splicemaps'],
+    script:
+        "./als_enrichment_als_genes.py"
+        
+        
+rule als_enrichment_als_genes_dataset_splicemap:
+    input:
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dataset_splicemap']['dna'], 
+                                             vcf_id=wildcard_vcf_id, tissue='motor_neuron'),
+        als_genes = config_precomputed['als_genes'],
+        coding_genes = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['coding_genes'],
+    params:
+        model_cutoffs = model_cutoffs,
+        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
+    output:
+        enrichment_als_genes = OUTPUT_DIR_BENCHMARK + config['als_known_genes']['dataset_splicemap'],
+    script:
+        "./als_enrichment_als_genes.py"
+        
+    
+rule all_benchmark_als:
+    input:
+        expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['gtex_splicemaps']['dna'],
+              tissue='motor_neuron', gtex_tissue='Brain'),
+        expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['dataset_splicemap']['dna'],
+               tissue='motor_neuron'),
+        OUTPUT_DIR_PROTEOMICS + config['proteomics']['motor_neuron_splicemap']['enrichment'],
+        OUTPUT_DIR_PROTEOMICS + config['proteomics']['enrichment'],
+        OUTPUT_DIR_BENCHMARK + config['als_known_genes']['gtex_splicemaps'],
+        OUTPUT_DIR_BENCHMARK + config['als_known_genes']['dataset_splicemap'],
+               

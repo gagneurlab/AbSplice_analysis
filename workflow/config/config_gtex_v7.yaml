@@ -1,0 +1,141 @@
+output_dir:
+    junction_annotation: root_dir/gtex_v7/junction_annotation/
+    splicing_preds: root_dir/gtex_v7/splicing_predictions/
+    outliers: root_dir/gtex_v7/outlier_ground_truth/
+    vcf_annotation: root_dir/gtex_v7/vcf_annotation/
+    benchmark: root_dir/gtex_v7/benchmark/
+
+
+filtering_params:
+    vcf:
+        format_fields: ['GT','GQ','DP','AD']
+        remove_chr: False
+        min_GQ: 99
+        min_DP_ALT: 10
+        filter_long_indels: 10
+    count_table:
+        update_samples: True
+        key_assay: 'RNA_ID'
+        value_assay: 'INDIVIDUAL_ID'
+        subset_chroms: False
+        infer_strand: False
+    splicemap:
+        use_faster: True
+        percentile: 95
+        percentile_min_read: 1
+        median_cutoff: 1
+    outliers:
+        padjustGene_cutoff: 0.1
+        padjust_junction_cutoff: 0.05
+        totalCounts_cutoff: 20
+        delta_psi_cutoff: 0.3
+        outlier_type: 'psi5__psi3__theta'
+        num_junction_outliers_per_samples: 15
+    outliers_expression:
+        padjust: 0.05
+    absplice:
+        median_n_cutoff: 10
+        tpm_cutoff: 1
+        count_cat_cutoff: 20
+
+
+genome: 'hg19'
+fasta: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa
+gtf: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
+
+vcf: root_dir/vcf_processing/gtex_v7/vcf_normalized/{vcf_id}.vcf.gz
+
+gene_expression: 
+  raw: root_dir/common/hg19/gene_expression_tpm/raw_median_tpm.gz
+
+DROP:
+    tissue_map: root_dir/gtex_v7/tissue_map_DROP.csv
+    sample_annotation: root_dir/gtex_v7/sample_annotation.tsv
+    version: 'v29'
+    splicemap:
+        working_dir: root_dir/gtex_v7/processed_data/aberrant_splicing/datasets/
+    outlier:
+        splicing:
+            working_dir: root_dir/gtex_v7/processed_results/aberrant_splicing/datasets/ 
+        expression:
+            working_dir: root_dir/gtex_v7/processed_results/aberrant_expression/datasets/
+   
+method: 'kn'
+event_filter: 'median_cutoff'
+gtex_version: 'gtex_v7'
+  
+gtex_tissues:
+    - Adipose_Subcutaneous
+    - Adipose_Visceral_Omentum
+    - Adrenal_Gland
+    - Artery_Aorta
+    - Artery_Coronary
+    - Artery_Tibial
+    - Brain_Amygdala
+    - Brain_Anterior_cingulate_cortex_BA24
+    - Brain_Caudate_basal_ganglia
+    - Brain_Cerebellar_Hemisphere
+    - Brain_Cerebellum
+    - Brain_Cortex
+    - Brain_Frontal_Cortex_BA9
+    - Brain_Hippocampus
+    - Brain_Hypothalamus
+    - Brain_Nucleus_accumbens_basal_ganglia
+    - Brain_Putamen_basal_ganglia
+    - Brain_Spinal_cord_cervical_c_1
+    - Brain_Substantia_nigra
+    - Breast_Mammary_Tissue
+    - Cells_Cultured_fibroblasts
+    - Cells_EBV_transformed_lymphocytes
+    - Colon_Sigmoid
+    - Colon_Transverse
+    - Esophagus_Gastroesophageal_Junction
+    - Esophagus_Mucosa
+    - Esophagus_Muscularis
+    - Heart_Atrial_Appendage
+    - Heart_Left_Ventricle
+    - Kidney_Cortex
+    - Liver
+    - Lung
+    - Minor_Salivary_Gland
+    - Muscle_Skeletal
+    - Nerve_Tibial
+    - Ovary
+    - Pancreas
+    - Pituitary
+    - Prostate
+    - Skin_Not_Sun_Exposed_Suprapubic
+    - Skin_Sun_Exposed_Lower_leg
+    - Small_Intestine_Terminal_Ileum
+    - Spleen
+    - Stomach
+    - Testis
+    - Thyroid
+    - Uterus
+    - Vagina
+    - Whole_Blood
+
+chroms:
+  - 'chr1'
+  - 'chr2'
+  - 'chr3'
+  - 'chr4'
+  - 'chr5'
+  - 'chr6'
+  - 'chr7'
+  - 'chr8'
+  - 'chr9'
+  - 'chr10'
+  - 'chr11'
+  - 'chr12'
+  - 'chr13'
+  - 'chr14'
+  - 'chr15'
+  - 'chr16'
+  - 'chr17'
+  - 'chr18'
+  - 'chr19'
+  - 'chr20'
+  - 'chr21'  
+  - 'chr22'
+  - 'chrX'

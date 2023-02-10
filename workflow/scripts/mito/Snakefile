@@ -1,0 +1,67 @@
+import os
+import yaml
+SNAKEMAKE_DIR = os.path.dirname(workflow.snakefile)
+
+# Read static config file (contains folder structure of splicing predictions)
+config_static_path = f"{SNAKEMAKE_DIR}/../../config/config_static_structure.yaml"
+with open(config_static_path, "r") as fd:
+    config_static = yaml.safe_load(fd)
+    
+# Read provided file config (contains precomputed spliceai db etc.)
+config_precomputed_path = f"{SNAKEMAKE_DIR}/../../config/config_provided_files.yaml"
+with open(config_precomputed_path, "r") as fd:
+    config_precomputed = yaml.safe_load(fd)
+
+# Read config from dataset (user can change accordingly)
+configfile: "./../../config/config_mito.yaml"
+wildcard_vcf_id = config['chroms']
+  
+OUTPUT_DIR_JUNCTION_ANNO = config['output_dir']['junction_annotation']
+OUTPUT_DIR_SPLICING = config['output_dir']['splicing_preds']
+OUTPUT_DIR_OUTLIER = config['output_dir']['outliers']
+OUTPUT_DIR_VCF_ANNO = config['output_dir']['vcf_annotation']
+OUTPUT_DIR_BENCHMARK = config['output_dir']['benchmark']
+
+# VCF annotation
+include: "../common/vcf_annotation/snakemake_scripts/vcf_annotation.smk"
+# SpliceMap
+include: "./junction_annotation/mito_generate_gene_tpm.smk"
+include: "../common/junction_annotation/snakemake_scripts/splicemap_generate.smk"
+# Splicing predictions
+include: "../common/splicing_pred/snakemake_scripts/splicing_pred_baseline_models.smk"
+include: "../common/splicing_pred/snakemake_scripts/splicing_pred_gtex_splicemaps.smk"
+include: "../common/splicing_pred/snakemake_scripts/splicing_pred_gtex_splicemaps_absplice.smk"
+include: "../common/splicing_pred/snakemake_scripts/splicing_pred_dataset_splicemap.smk"
+# Splicing predictions (gene level aggregation)
+include: "../common/splicing_result/snakemake_scripts/splicing_result_baseline_models.smk"
+include: "../common/splicing_result/snakemake_scripts/splicing_result_gtex_splicemaps_gene_level_tissue_subset.smk"
+include: "../common/splicing_result/snakemake_scripts/splicing_result_dataset_splicemap_gene_level.smk"
+# Outlier ground truth
+include: "../common/outlier_ground_truth/snakemake_scripts/outlier_ground_truth.smk"
+# Benchmark
+include: "../common/benchmark/snakemake_scripts/benchmark_construct_universe.smk"
+include: "../common/benchmark/snakemake_scripts/benchmark_gtex_splicemaps_dna.smk"
+include: "../common/benchmark/snakemake_scripts/benchmark_dataset_splicemap_dna.smk"
+include: "./benchmark/Snakefile"
+
+
+rule all:
+    input:
+        rules.mito_generate_tissue_map.output,
+        expand(rules.generate_splicemap.output,
+               tissue=config['tissue_dataset']),
+        
+        rules.all_benchmark_dna_gtex_splicemaps.input,
+        
+        rules.all_benchmark_dna_dataset_splicemap.input,
+        
+        rules.all_mito_benchmark.input
+        
+        
+       
+
+        
+
+
+        
+

@@ -1,0 +1,163 @@
+from absplice_scripts.utils.model_utils import *
+   
+OUTPUT_DIR = OUTPUT_DIR_SPLICING + config_static['splicing_pred']['levels']['variant_level']
+    
+# Universe        
+rule combine_universe_vep_annotate_all_for_plot:
+    input:
+        universe_variant = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['universe_variant_level'],
+        vep = config['vep_anno'],
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 48000,
+    output:
+        universe_vep = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['universe']['universe_with_vep'],
+    script:
+        "./universe_with_vep.py"
+        
+        
+rule benchmark_combine_dna_var_level:
+    input:
+        universe = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['universe']['universe_with_vep'],
+        outliers = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outlier_outcome']['ground_truth_benchmark'],
+        
+        spliceai = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai'],
+        spliceai_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap']['gtex_splicemaps']['all'],
+        spliceai_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap_ref_psi']['gtex_splicemaps']['all'],
+        mmsplice_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap']['gtex_splicemaps'],
+        mmsplice_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap_ref_psi']['gtex_splicemaps'],
+        absplice_dna = expand(OUTPUT_DIR_SPLICING + config['absplice_training']['preds']['dna']['variant_level'], 
+                              classifier='{classifier}', feature_string='{feature_string_dna}', abs_features='{abs_features}')[0],
+        mmsplice = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice'],
+        mtsplice = OUTPUT_DIR + config_static['splicing_pred']['models']['mtsplice'],
+        cadd_splice = OUTPUT_DIR + config_static['splicing_pred']['models']['cadd_splice'],
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 64000,
+    params:
+        pred_tools = pred_tools_dna,
+        tissue_specific_tools = tissue_specific_tools,
+        unique_index = ['variant', 'gene_id', 'sample'],
+        cols_spliceai = [
+            'delta_score'],
+        cols_mmsplice = [
+            'delta_logit_psi'],
+        cols_mmsplice_splicemap = [
+            'delta_logit_psi', 'delta_psi', 'median_n', 'ref_psi', 'gene_tpm', 'tissue'],
+        cols_mmsplice_splicemap_ref_psi = [
+            'delta_logit_psi', 'delta_psi', 'median_n', 'ref_psi', 'gene_tpm', 'tissue'],
+        cols_absplice_dna = [
+            'AbSplice_DNA', 'tissue'],
+        cols_mtsplice = [
+            'delta_logit_psi_mtsplice', 'tissue'
+        ],
+        cols_cadd_splice = [
+            'PHRED'
+        ],
+        cols_spliceai_splicemap = [
+            'junctions', 'delta_score', 'psi5_median_n', 'psi3_median_n', 'psi5_ref_psi', 'psi3_ref_psi', 'tissue'
+        ],
+        cols_spliceai_splicemap_ref_psi = [
+            'junctions', 'delta_score', 'psi5_median_n', 'psi3_median_n', 'psi5_ref_psi', 'psi3_ref_psi', 'tissue'
+        ]
+    output:
+        combined_benchmark = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['parts'],
+    script:
+        "../../benchmark_combine.py"
+        
+
+        
+rule outlier_variant_category_performance_overall:
+    input:
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['parts'],
+                           vcf_id=wildcard_vcf_id, tissue=config['gtex_tissues'], 
+                           classifier='{classifier}', feature_string_dna='{feature_string_dna}', abs_features='{abs_features}'),
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 64000,
+    params:
+        var_category = '{var_category}',
+        outlier_category = '{outlier_category}',
+        feature_string_dna = '{feature_string_dna}',
+        outlier_column = 'outlier',
+        model_dict = model_dict_dna,
+        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
+        gene_tpm_cutoff = config['filtering_params']['absplice']['tpm_cutoff'],
+    output:
+        df_performance = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['performance'],
+        benchmark_stats = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['stats']['general'],
+    script:
+        "./performance_overall.py"   
+        
+        
+        
+rule performance_outlier_category:
+    input:
+        performance = expand(OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['performance'],
+                            var_category='{var_category}', outlier_category=config['outlier_categories'],
+                            classifier='{classifier}', feature_string_dna='{feature_string_dna}', abs_features='{abs_features}'),
+    params:
+        replace_dict = replace_dict_outliers,
+    output:
+        performance_plot = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['performance_outlier_category'],
+    script:
+        "./performance_outlier_category.py"
+        
+        
+rule performance_variant_category:
+    input:
+        performance = expand(OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['performance'],
+                            var_category=config['var_categories'], outlier_category='{outlier_category}',
+                            classifier='{classifier}', feature_string_dna='{feature_string_dna}', abs_features='{abs_features}'),
+    params:
+        replace_dict = replace_dict_variants,
+    output:
+        performance_plot = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['performance_variant_category'],
+    script:
+        "./performance_variant_category.py"
+        
+        
+# ===================== STATS NUMBERS =====================
+rule benchmark_stats_number_outliers_var_category:
+    input:
+        benchmark_stats = expand(OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['stats']['general'],
+                                 var_category=config['var_categories'], outlier_category='{outlier_category}',
+                                 classifier='{classifier}', feature_string_dna='{feature_string_dna}', abs_features='{abs_features}'),
+    params:
+        replace_dict_variants = replace_dict_variants,
+        replace_dict_outliers = replace_dict_outliers,
+    output:
+        benchmark_stats_all = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['stats']['variant_category'],
+    script:
+        './benchmark_stats_number_outliers_all.py'
+        
+        
+        
+rule benchmark_stats_number_outliers_outlier_category:
+    input:
+        benchmark_stats = expand(OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['stats']['general'],
+                                 var_category='{var_category}', outlier_category=config['outlier_categories'],
+                                 classifier='{classifier}', feature_string_dna='{feature_string_dna}', abs_features='{abs_features}'),
+    params:
+        replace_dict_variants = replace_dict_variants,
+        replace_dict_outliers = replace_dict_outliers,
+    output:
+        benchmark_stats_all = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['stats']['outlier_category'],
+    script:
+        './benchmark_stats_number_outliers_all.py'
+        
+        
+        
+rule all_variant_and_outlier_categories:
+    input:
+        expand(rules.outlier_variant_category_performance_overall.output,
+               classifier=config['absplice_params']['classifier'],
+               abs_features=config['absplice_params']['abs_features'],
+               feature_string_dna=config['absplice_params']['feature_string_dna'],
+               var_category=config['var_categories'],
+               outlier_category='all',
+              ),
+        expand(rules.outlier_variant_category_performance_overall.output,
+               classifier=config['absplice_params']['classifier'],
+               abs_features=config['absplice_params']['abs_features'],
+               feature_string_dna=config['absplice_params']['feature_string_dna'],
+               var_category='all',
+               outlier_category=config['outlier_categories'],
+              ),

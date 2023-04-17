@@ -20,7 +20,7 @@ The main tasks of the pipeline are:
 * `benchmark` creates the benchmark dataframes from predictions and outliers. Where each gene, sample, tissue combination in the benchmark contains at least one rare variant on the gene
 
 # Figure generation
-All figures from the manuscript can be generated from the the provided scripts in [here](https://gitlab.cmm.in.tum.de/gagneurlab/absplice_figures/-/tree/master/figures_R). The minimal dataset to produce the figures is available [here](https://zenodo.org/record/7628916). To run the scripts, first download and unzip the provided data folder to the root directory of this repository.
+All figures from the manuscript can be generated from the the provided scripts in [here](https://github.com/gagneurlab/AbSplice_analysis/tree/master/figures_R). The minimal dataset to produce the figures is available [here](https://zenodo.org/record/7628916). To run the scripts, first download and unzip the provided data folder to the root directory of this repository.
 
 
 

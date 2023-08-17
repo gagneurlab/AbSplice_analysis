@@ -1,6 +1,6 @@
 # AbSplice analysis
 
-Repository for the analyses done in the paper "Aberrant splicing across human tissues"
+Repository for the analyses done in the [publication](https://www.nature.com/articles/s41588-023-01373-3) "Aberrant splicing prediction across human tissues".
 
 # Folder Structure
 The project is setup as a snakemake pipeline. 
@@ -20,11 +20,11 @@ The main tasks of the pipeline are:
 * `benchmark` creates the benchmark dataframes from predictions and outliers. Where each gene, sample, tissue combination in the benchmark contains at least one rare variant on the gene
 
 # Necessary files to provide by the user
-In order for the pipeline to work you need to provide some files:
-- outlier calls from DROP. Create a symlink to the DROP results in the folder `../../data/resources/{dataset}/DROP/`, where dataset can be `gtex_v8`, `mito` and `als`.
-- rocksdb database with precomputed SpliceAI scores. Create a symlink in `../../data/resources/common/{genome}/SpliceAI/spliceai.db`, where genome can be `hg19` and `hg38`. These databases can be created from: https://github.com/gagneurlab/spliceai_rocksdb.
-- rocksdb database with gnomAD minor allele frequencies. Create a symlink in `../../data/resources/common/{genome}/gnomAD_maf_db/rocksdb/maf.db`, where genome can be `hg19` and `hg38`. These databases can be created from: https://github.com/gagneurlab/gnomad_rocksdb.
-- vcf files from the dataset. Store them in `../../data/resources/{dataset}/vcf_normalized/{vcf_id}.vcf.gz`, where dataset can be `gtex_v8`, `mito` and `als`. `vcf_id` can be anything (e.g. sampleID or split huge vcf by chromosome to parallelize computations).
+In order for the pipeline to work users need to provide some files:
+- outlier calls from DROP. Create a symlink to the DROP results in the folder `./workflow/data/resources/{dataset}/DROP/`, where dataset can be `gtex_v8`, `mito` and `als`.
+- rocksdb database with precomputed SpliceAI scores. Create a symlink in `./workflow/data/resources/common/{genome}/SpliceAI/spliceai.db`, where genome can be `hg19` and `hg38`. These databases can be created from: https://github.com/gagneurlab/spliceai_rocksdb.
+- rocksdb database with gnomAD minor allele frequencies. Create a symlink in `./workflow/data/resources/common/{genome}/gnomAD_maf_db/rocksdb/maf.db`, where genome can be `hg19` and `hg38`. These databases can be created from: https://github.com/gagneurlab/gnomad_rocksdb.
+- vcf files from the dataset. Store them in `./workflow/data/resources/{dataset}/vcf_normalized/{vcf_id}.vcf.gz`, where dataset can be `gtex_v8`, `mito` and `als`. `vcf_id` can be anything (e.g. sampleID or split huge vcf by chromosome to parallelize computations).
 
 # Figure generation
 All figures from the manuscript can be generated from the the provided scripts in [here](https://github.com/gagneurlab/AbSplice_analysis/tree/master/figures_R). The minimal dataset to produce the figures is available [here](https://zenodo.org/record/7628916). To run the scripts, first download and unzip the provided data folder to the root directory of this repository.

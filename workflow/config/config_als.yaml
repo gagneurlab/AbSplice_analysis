@@ -9,8 +9,8 @@ output_dir:
     reports: ../../data/als/reports/
 
 genome: 'hg38'
-fasta: /s/genomes/human/hg38/gencode.v38/GRCh38.primary_assembly.genome.fa
-gtf: /s/genomes/human/hg38/gencode.v38/gencode.v38.annotation.gtf
+fasta: root_dir/genomes/human/hg38/gencode.v38/GRCh38.primary_assembly.genome.fa
+gtf: root_dir/genomes/human/hg38/gencode.v38/gencode.v38.annotation.gtf
 
 gene_count: ../../data/resources/als/AnswerALS-290-T-v1-release5_rna-counts-matrix.csv
         
@@ -32,7 +32,7 @@ DROP:
             working_dir: ../../data/resources/als/DROP/processed_results/aberrant_expression/ 
             
 proteomics:
-    full_results: /s/project/als/analysis/proteomics/results_all.tsv
+    full_results: root_dir/project/als/analysis/proteomics/results_all.tsv
     full_results_annotated: PROTRIDER_results_annotated.csv
     enrichment: proteomics_enrichment_tissue={tissue}_tissue_pred={tissue_pred}.csv
     true_preds: proteomics_true_preds_tissue={tissue}_tissue_pred={tissue_pred}.csv

@@ -8,8 +8,8 @@ output_dir:
     reports: ../../data/mito/reports/
 
 genome: 'hg19'
-fasta: /s/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa
-gtf: /s/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
+fasta: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa
+gtf: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
 
 gene_tpm_dataset: ../../data/resources/common/hg19/gene_expression_tpm/Prokisch_Fibroblasts_tpm.csv
 

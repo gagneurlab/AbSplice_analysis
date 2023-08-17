@@ -1,10 +1,10 @@
 import pyarrow
-from splicing_outlier_prediction import SpliceOutlier, SpliceOutlierDataloader
+from absplice import SpliceOutlier, SpliceOutlierDataloader
 
 dl = SpliceOutlierDataloader(
     snakemake.input['fasta'], snakemake.input['vcf'],
     splicemap5=list(snakemake.input['splicemap_5']),
-    splicemap3=list(snakemake.input['splicemap_3'])
+    splicemap3=list(snakemake.input['splicemap_3']),
 )
 
 model = SpliceOutlier()

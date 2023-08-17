@@ -56,7 +56,7 @@ chosen_models <- c(
   'MMSplice', 
   'SpliceAI',
   'AbSplice-DNA', 
-  'CAT p-value (fibroblasts)',
+  # 'CAT p-value (fibroblasts)',
   'AbSplice-RNA (fibroblasts)' 
 )
 color_list = absplice_model_colors[chosen_models]
@@ -70,7 +70,8 @@ g_gtex_v8_RNA_pr_curve <- plot_pr_curve(
   df,
   ylim=1,
   color_list,
-  breaks_y=0.2, minor_breaks_y=0.1,
+  breaks_y=0.2, minor_breaks_y=0.1
+  # fontsize=24
 )
 g_gtex_v8_RNA_pr_curve
 ggsave(plot=g_gtex_v8_RNA_pr_curve, filename="out/main_figures/Figure_5/Figure_5c.pdf", height=unit(4, "cm"), width=unit(6, "cm"), dpi=450)

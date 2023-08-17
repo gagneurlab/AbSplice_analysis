@@ -8,11 +8,11 @@ def DROP_path_junction_anno(wildcards):
 rule outlier_multiple_tissues:
     input:
         outliers_signif = expand(OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['gene_junction_signif'],
-                                 tissue=config['gtex_tissues']),
+                                 tissue=config['tissues']),
         sample_anno = config['DROP']['sample_annotation'],
         tissue_map = config['DROP']['tissue_map'],
     params:
-        tissues = config['gtex_tissues'],
+        tissues = config['tissues'],
     output:
         outlier_multiple_tissues = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outliers_multiple_tissues']['gene_level'],
         outlier_multiple_tissues_junction_level = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outliers_multiple_tissues']['junction_level'],

@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import pandas as pd
 import re
 
 missing = list()
@@ -15,7 +16,7 @@ for path in tqdm(snakemake.input['performance']):
         missing.append(path)
 df = pd.concat(df)
 
-for model in tqdm(model_order):
+for model in tqdm(sorted(set(df['model']))):
     # set start precision to 0
     df.loc[
         (df['model'] == model)

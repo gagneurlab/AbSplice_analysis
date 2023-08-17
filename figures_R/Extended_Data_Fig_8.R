@@ -33,8 +33,10 @@ p_log_odds <- (
   + geom_abline(slope=1)
   + ylab("Odds")
   + scale_y_log10(breaks=breaks, minor_breaks =minor_breaks)
+  # + scale_y_log10()
   
-  + scale_color_manual(values=c("#999999","#000000"))
+  # + scale_color_manual(values=c("#999999","#000000"))
+  + scale_color_manual(values=c("#000000"))
   
   + labs(
     x="mean bins of logit(AbSplice-DNA)",
@@ -84,4 +86,5 @@ plot_calibration_AbSplice_DNA <- ggarrange(
   p_log_odds
 )
 ggsave(plot=plot_calibration_AbSplice_DNA, filename="out/Extended_Data_Figures/Extended_Data_Figure_8/Extended_Data_Figure_8.pdf", height=unit(12, "cm"), width=unit(12, "cm"), dpi=450)
+ggsave(plot=plot_calibration_AbSplice_DNA, filename="out/Extended_Data_Figures/Extended_Data_Figure_8/Extended_Data_Figure_8.png", height=unit(12, "cm"), width=unit(12, "cm"), dpi=450)
 

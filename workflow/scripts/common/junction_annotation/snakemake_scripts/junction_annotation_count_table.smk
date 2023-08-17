@@ -52,11 +52,19 @@ rule update_count_table:
         update_samples = config['filtering_params']['count_table']['update_samples'],
         key_assay = config['filtering_params']['count_table']['key_assay'],
         value_assay = config['filtering_params']['count_table']['value_assay'],
-        subset_chroms = config['filtering_params']['count_table']['subset_chroms'],
-        chroms = config['chroms'],
 #         remove_chr_from_chrom_annotation = config['filtering_params']['count_table']['remove_chr_from_chrom_annotation'],
         infer_strand = config['filtering_params']['count_table']['infer_strand'],
     output:
         updated_count_table = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['count_table']['updated'],
     script:
         "../update_count_table.py"
+
+
+rule all_count_table:
+    input:
+        expand(rules.annotate_fraser.output,
+               tissue=config['splicemap_tissues']),
+        expand(rules.annotate_count_table.output,
+               tissue=config['splicemap_tissues']),
+        expand(rules.update_count_table.output,
+               tissue=config['splicemap_tissues']),

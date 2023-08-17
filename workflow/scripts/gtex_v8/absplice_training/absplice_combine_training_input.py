@@ -1,5 +1,5 @@
 import pandas as pd
-from splicing_outlier_prediction.utils import get_abs_max_rows
+from absplice.utils import get_abs_max_rows
 import ast
 
 index = ['variant', 'gene_id', 'sample','tissue']

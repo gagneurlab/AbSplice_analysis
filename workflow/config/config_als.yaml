@@ -1,47 +1,43 @@
 # Path to adapt by user
 output_dir: 
-    junction_annotation: root_dir/als/junction_annotation/
-    splicing_preds: root_dir/als/splicing_predictions/
-    outliers: root_dir/als/outlier_ground_truth/
-    vcf_annotation: root_dir/als/vcf_annotation/
-    benchmark: root_dir/als/benchmark/
-    proteomics: root_dir/als/proteomics/
+    junction_annotation: ../../data/results/als/junction_annotation/
+    splicing_preds: ../../data/results/als/splicing_predictions/
+    outliers: ../../data/results/als/outlier_ground_truth/
+    vcf_annotation: ../../data/results/als/vcf_annotation/
+    benchmark: ../../data/results/als/benchmark/
+    proteomics: ../../data/results/als/proteomics/
+    reports: ../../data/als/reports/
 
 genome: 'hg38'
-fasta: root_dir/genomes/human/hg38/gencode.v38/GRCh38.primary_assembly.genome.fa
-gtf: root_dir/genomes/human/hg38/gencode.v38/gencode.v38.annotation.gtf
+fasta: /s/genomes/human/hg38/gencode.v38/GRCh38.primary_assembly.genome.fa
+gtf: /s/genomes/human/hg38/gencode.v38/gencode.v38.annotation.gtf
 
-gene_count: root_dir/als/download/transcriptomics/4_matrix/AnswerALS-290-T-v1-release5_rna-counts-matrix.csv
+gene_count: ../../data/resources/als/AnswerALS-290-T-v1-release5_rna-counts-matrix.csv
         
-vcf: root_dir/vcf_processing/ALS/vcf_normalized/{vcf_id}.vcf.gz
+vcf: ../../data/resources/als/vcf_normalized/{vcf_id}.vcf.gz
 
 DROP:
-    outlier_ground_truth_all: root_dir/als/DROP_output/processed_results/aberrant_splicing/results/v38/fraser/
-    tissue_map: root_dir/absplice/data/results/als/tissue_map_DROP.csv
-    sample_annotation_pure: root_dir/als/analysis/sample_annotation_drop.tsv
-    sample_annotation: root_dir/absplice/data/results/als/junction_annotation/sample_annotation_drop.tsv
+    outlier_ground_truth_all: ../../data/resources/als/DROP/processed_results/aberrant_splicing/results/v38/fraser/
+    tissue_map: ../../data/resources/als/tissue_map_DROP.csv
+    sample_annotation_pure: ../../data/resources/als/sample_annotation_drop_pure.tsv
+    sample_annotation: ../../data/resources/als/sample_annotation_drop.tsv
     version: 'v38'
     analysis_name: 'release5'
     splicemap:
-        working_dir: root_dir/als/DROP_output/processed_data/aberrant_splicing/datasets/
+        working_dir: ../../data/resources/als/DROP/processed_data/aberrant_splicing/datasets/
     outlier:
         splicing:
-            working_dir: root_dir/als/DROP_output/processed_results/aberrant_splicing/datasets/
+            working_dir: ../../data/resources/als/DROP/processed_results/aberrant_splicing/datasets/
         expression:
-            working_dir: root_dir/als/DROP_output/processed_results/aberrant_expression/ 
+            working_dir: ../../data/resources/als/DROP/processed_results/aberrant_expression/ 
             
 proteomics:
-    full_results: root_dir/als/analysis/proteomics/results_all.tsv
+    full_results: /s/project/als/analysis/proteomics/results_all.tsv
     full_results_annotated: PROTRIDER_results_annotated.csv
-    enrichment: proteomics_enrichment.csv
-    true_preds: proteomics_true_preds.csv
-    motor_neuron_splicemap:
-        enrichment: proteomics_enrichment_motor_neuron_splicemap.csv
-        true_preds: proteomics_true_preds_motor_neuron_splicemap.csv
+    enrichment: proteomics_enrichment_tissue={tissue}_tissue_pred={tissue_pred}.csv
+    true_preds: proteomics_true_preds_tissue={tissue}_tissue_pred={tissue_pred}.csv
         
-als_known_genes:
-    gtex_splicemaps: als_known_genes/gtex_splicmaps/enrichment_known_als_genes.csv
-    dataset_splicemap: als_known_genes/dataset_splicemap/enrichment_known_als_genes.csv
+als_known_genes: als_known_genes/tissue={tissue}_tissue_pred={tissue_pred}_enrichment_known_als_genes.csv
           
           
 # Not to change by user
@@ -77,11 +73,6 @@ filtering_params:
         tpm_cutoff: 1
         count_cat_cutoff: 20
         
-  
-tissue_dataset: 'motor_neuron'
-tissues_cat: 
-    - motor_neuron
-
 spliceai:
     lookup_only: False
    
@@ -89,9 +80,33 @@ method: 'kn'
 event_filter: 'median_cutoff'
 gtex_version: 'gtex_v8'
 
-tissue_subsets_for_pred:
+use_gene_tpm: False 
+
+# TODO: add motor_neurons
+tissue_map_subset: ../../data/resources/gtex_v8/tissue_map_main_tissue.csv
+
+models:
+    - spliceai
+    # - mmsplice
+    - mmsplice_splicemap
+    - mmsplice_splicemap_ref_psi
+    - spliceai_splicemap
+    - spliceai_splicemap_ref_psi
+    - absplice_dna
+
+tissues_cat:
+    - motor_neuron
+
+# tissue_subsets_for_pred:
+tissues_subset:
     - Brain
-gtex_tissues:
+
+splicemap_tissues:
+    - motor_neuron
+
+tissue_target: motor_neuron
+
+tissues:
     - Brain_Amygdala
     - Brain_Anterior_cingulate_cortex_BA24
     - Brain_Caudate_basal_ganglia
@@ -105,6 +120,8 @@ gtex_tissues:
     - Brain_Putamen_basal_ganglia
     - Brain_Spinal_cord_cervical_c_1
     - Brain_Substantia_nigra
+
+    - motor_neuron
 
 chroms:
   - 'chr1'
@@ -129,4 +146,4 @@ chroms:
   - 'chr20'
   - 'chr21'  
   - 'chr22'
-  - 'chrX'
+#   - 'chrX'

@@ -1,4 +1,4 @@
-# import pyarrow
+import pyarrow
 from mmsplice import predict_save, MMSplice
 from mmsplice.vcf_dataloader import SplicingVCFDataloader
 import pandas as pd

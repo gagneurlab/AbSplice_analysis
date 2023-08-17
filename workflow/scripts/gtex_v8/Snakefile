@@ -28,12 +28,14 @@ include: "../common/vcf_annotation/snakemake_scripts/vcf_annotation.smk"
 include: "./junction_annotation/gtex_v8_generate_gene_tpm.smk"
 include: "../common/junction_annotation/snakemake_scripts/splicemap_generate.smk"
 # Splicing predictions
-include: "../common/splicing_pred/snakemake_scripts/splicing_pred_baseline_models.smk"
-include: "../common/splicing_pred/snakemake_scripts/splicing_pred_gtex_splicemaps.smk"
-# Splicing predictions (gene level aggregation)
-include: "../common/splicing_result/snakemake_scripts/splicing_result_baseline_models.smk"
-include: "../common/splicing_result/snakemake_scripts/splicing_result_gtex_splicemaps_gene_level.smk"
-include: "../common/splicing_result/snakemake_scripts/splicing_result_gtex_splicemaps_variant_level.smk"
+include: "../common/splicing_pred/snakemake_scripts/splicing_pred.smk"
+# Splicing results (postprocess)
+include: "../common/splicing_result/postprocess_preds/postprocess_preds.smk"
+# Splicing results (max aggregation)
+include: "../common/splicing_result/gene_level_aggregation.smk"
+include: "../common/splicing_result/gene_level_aggregation_tissue_subset.smk"
+include: "../common/splicing_result/variant_level_aggregation.smk"
+include: "../common/splicing_result/variant_level_aggregation_tissue_subset.smk"
 # Outlier ground truth
 include: "../common/outlier_ground_truth/snakemake_scripts/outlier_ground_truth.smk"
 include: "../gtex_v8/outlier_ground_truth/Snakefile"
@@ -44,26 +46,38 @@ include: "../gtex_v8/absplice_training/rna/absplice_training_rna_all_cats.smk"
 # Benchmark
 include: "../common/benchmark/snakemake_scripts/benchmark_construct_universe.smk"
 include: "../gtex_v8/benchmark/dna/benchmark_dna.smk"
-include: "../gtex_v8/benchmark/dna/variant_outlier_categories/Snakefile"
 include: "../gtex_v8/benchmark/rna/benchmark_rna.smk"
+include: "../gtex_v8/benchmark/dna/variant_outlier_categories/Snakefile"
+# Visualize
+# include: "../gtex_v8/visualize/Snakefile"
 
 
 rule all:
     input:
-        rules.gtex_v8_generate_tissue_map.output,  
+        rules.all_gtex_tissue_maps.output,  
         
         # Generate all SpliceMaps
         rules.all_generate_splicemap.input,
+
+        # Splicing predictions
+        rules.all_splicing_pred.input,
+
+        # Postprocess predictions
+        rules.all_splicing_result_postprocess.input,
+
+        # Max aggregate predictions 
+        rules.all_splicing_result_gene_level.input,
+        rules.all_splicing_result_gene_level__tissue_subset.input,
+        rules.all_splicing_result_variant_level.input,
+        rules.all_splicing_result_variant_level__tissue_subset.input,
         
         # AbSplice training
         rules.all_absplice_training_dna.input,
         rules.all_absplice_training_rna_single_cat.input,
         rules.all_absplice_training_rna_all_cats.input,
         
-        # Variant and outlier outcome categories
-        rules.all_variant_and_outlier_categories.input,
-        
-        # Benchmark
+        # # Benchmark
         rules.all_benchmark_dna.input,
-        rules.all_benchmark_rna.input
+        rules.all_benchmark_rna.input,
+        rules.all_variant_and_outlier_categories.input,
 

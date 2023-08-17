@@ -1,5 +1,5 @@
 import pandas as pd
-from splicing_outlier_prediction.utils import get_abs_max_rows
+from absplice.utils import get_abs_max_rows
 import ast
 
 df_absplice_input = pd.read_csv(snakemake.input['absplice_input'])

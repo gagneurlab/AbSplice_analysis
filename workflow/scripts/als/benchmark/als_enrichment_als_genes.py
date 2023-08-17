@@ -34,7 +34,7 @@ df_benchmark = df_benchmark[df_benchmark['CASE'] == True]
 # annotate als genes
 df_als = pd.read_csv(snakemake.input['als_genes'])
 
-df_gene_mapping = pd.read_csv('/s/project/absplice/data/resources/common/hg38/gene_id_to_name_mapping_updated_with_gencode_gtf.tsv', sep='\t')
+df_gene_mapping = pd.read_csv('../../data/resources/common/hg38/gene_id_to_name_mapping_updated_with_gencode_gtf.tsv', sep='\t')
 gene_map = dict(zip(df_gene_mapping['gene_name'], df_gene_mapping['gene_id']))
 df_als['gene_id'] = df_als['gene_name'].map(gene_map)
 df_als = df_als[~df_als['gene_id'].isna()]

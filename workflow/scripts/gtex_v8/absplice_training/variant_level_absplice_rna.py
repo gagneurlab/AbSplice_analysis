@@ -1,5 +1,5 @@
 import pandas as pd
-from splicing_outlier_prediction import SplicingOutlierResult
+from absplice import SplicingOutlierResult
 
 df_absplice_rna = pd.read_csv(snakemake.input['pred_absplice_rna'])
 df_absplice_rna = df_absplice_rna.rename(columns={'y_pred': 'AbSplice_RNA'})

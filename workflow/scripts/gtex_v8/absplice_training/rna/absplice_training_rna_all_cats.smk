@@ -11,7 +11,7 @@ rule absplice_rna_training_input_all_cats:
     input:
         universe = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['universe'],
         outliers = OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['variant_nearest_outlier']['parts_rare_var_dist_variant_level'],
-        absplice_input = ABSPLICE_INPUT_DIR + config_static['splicing_pred']['models']['absplice']['gtex_splicemaps']['rna']['all_cats'],
+        absplice_input = ABSPLICE_INPUT_DIR + config_static['splicing_pred']['models']['absplice']['rna']['all_cats'],
     params:
         tissue = '{tissue}',
         vcf_id = '{vcf_id}',
@@ -43,7 +43,7 @@ rule absplice_rna_training_input_subset_all_cats:
 rule absplice_rna_input_complete_all_cats:
     input:
         absplice_input = expand(OUTPUT_DIR_SPLICING + config['absplice_training']['training_input_subset']['rna']['all_cats'],
-                                tissue=config['gtex_tissues'], vcf_id=wildcard_vcf_id)
+                                tissue=config['tissues'], vcf_id=wildcard_vcf_id)
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 32000,
         threads = 1

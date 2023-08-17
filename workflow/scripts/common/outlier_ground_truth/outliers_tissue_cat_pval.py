@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from splicing_outlier_prediction.utils import get_abs_max_rows
+from absplice.utils import get_abs_max_rows
 
 def minus_log10(x):
     return -np.log10(x)

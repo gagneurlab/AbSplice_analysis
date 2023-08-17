@@ -1,5 +1,6 @@
 import pdb
 import pandas as pd
+import pyarrow
 from absplice.result import SplicingOutlierResult
 from absplice.cat_dataloader import CatInference
 
@@ -17,5 +18,5 @@ result = SplicingOutlierResult(
 result.add_samples(pd.read_csv(snakemake.input['var_samples_df']))
 
 result.infer_cat(cat_dl, progress=True)
-result.df_mmsplice_cat.to_parquet(snakemake.output['result'])
+result.df_mmsplice_cat.to_parquet(snakemake.output['result'], partition_cols='tissue_cat', engine='pyarrow')
 

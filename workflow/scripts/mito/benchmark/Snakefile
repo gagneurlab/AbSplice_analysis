@@ -1,75 +1,52 @@
 from absplice_scripts.utils.model_utils import *
 
-rule mito_jackknife_gtex_splicemaps:
+rule jackknife:
     input:
-        df_benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['gtex_splicemaps']['dna'], 
-                              vcf_id=wildcard_vcf_id, tissue='Prokisch_Fibroblasts', gtex_tissue='Cells_Cultured_fibroblasts'),
+        df_benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dna'], 
+                              vcf_id=wildcard_vcf_id, tissue='{tissue}', tissue_pred='{tissue_pred}'),
     params:
         samples = config['sampleIDs'],
         outlier_column = 'outlier',
         model_dict = model_dict_dna,
         median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
     output:
-        auPRC = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['gtex_splicemaps']['dna'],
-        stats = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['stats']['gtex_splicemaps']['dna'],
+        auPRC = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['dna'],
+        stats = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['stats']['dna'],
     script:
         "../../../scripts/common/benchmark/jacknife_samples.py"
         
         
-rule mito_jackknife_dataset_splicemap:
+rule tp_preds_among_total_preds:
     input:
-        df_benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dataset_splicemap']['dna'], 
-                              vcf_id=wildcard_vcf_id, tissue='Prokisch_Fibroblasts'),
-    params:
-        samples = config['sampleIDs'],
-        outlier_column = 'outlier',
-        model_dict = model_dict_dna,
-        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
-    output:
-        auPRC = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['dataset_splicemap']['dna'],
-        stats = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['stats']['dataset_splicemap']['dna'],
-    script:
-        "../../../scripts/common/benchmark/jacknife_samples.py"
-        
-        
-rule tp_preds_among_total_preds_dataset_splicemap:
-    input:
-        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dataset_splicemap']['dna'], 
-                           vcf_id=wildcard_vcf_id, tissue='Prokisch_Fibroblasts'),
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['dna'], 
+                           vcf_id=wildcard_vcf_id, tissue='{tissue}', tissue_pred='{tissue_pred}'),
     params:
         model_dict = model_dict_dna,
         model_cutoffs = model_cutoffs,
         median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
         subset_samples = False,
     output:
-        tp_among_all_preds_line = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['dataset_splicemap']['dna']['line'],
-        tp_among_all_preds_discrete_cutoff = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['dataset_splicemap']['dna']['discrete_cutoff']
-    script:
-        "../../../scripts/common/benchmark/tp_preds_among_total_preds.py" 
-        
-        
-rule tp_preds_among_total_preds_gtex_splicemaps:
-    input:
-        benchmark = expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['combined_benchmark']['gtex_splicemaps']['dna'], 
-                           vcf_id=wildcard_vcf_id, tissue='Prokisch_Fibroblasts', gtex_tissue='Cells_Cultured_fibroblasts'),
-    params:
-        model_dict = model_dict_dna,
-        model_cutoffs = model_cutoffs,
-        median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
-        subset_samples = False,
-    output:
-        tp_among_all_preds_line = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['gtex_splicemaps']['dna']['line'],
-        tp_among_all_preds_discrete_cutoff = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['gtex_splicemaps']['dna']['discrete_cutoff']
+        tp_among_all_preds_line = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['dna']['line'],
+        tp_among_all_preds_discrete_cutoff = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['dna']['discrete_cutoff']
     script:
         "../../../scripts/common/benchmark/tp_preds_among_total_preds.py" 
         
         
 rule all_mito_benchmark:
     input:
-        expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['gtex_splicemaps']['dna'],
-              tissue='Prokisch_Fibroblasts', gtex_tissue='Cells_Cultured_fibroblasts'),
-        expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['jackknife_performance']['auPRC']['dataset_splicemap']['dna'],
-               tissue='Prokisch_Fibroblasts'),
-        
-        expand(OUTPUT_DIR_BENCHMARK + config_static['benchmark']['tp_preds_among_total_preds']['gtex_splicemaps']['dna']['discrete_cutoff'],
-              tissue='Prokisch_Fibroblasts', gtex_tissue='Cells_Cultured_fibroblasts'),
+        expand(rules.jackknife.output,
+               tissue='Prokisch_Fibroblasts',
+               tissue_pred='Cells_Cultured_fibroblasts' 
+              ),
+        expand(rules.jackknife.output,
+               tissue='Prokisch_Fibroblasts',
+               tissue_pred='Prokisch_Fibroblasts' 
+              ),
+        expand(rules.tp_preds_among_total_preds.output,
+               tissue='Prokisch_Fibroblasts',
+               tissue_pred='Cells_Cultured_fibroblasts' 
+              ),
+        expand(rules.tp_preds_among_total_preds.output,
+               tissue='Prokisch_Fibroblasts',
+               tissue_pred='Prokisch_Fibroblasts' 
+              )

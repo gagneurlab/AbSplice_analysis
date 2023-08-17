@@ -21,10 +21,10 @@ rule benchmark_combine_dna_var_level:
         outliers = OUTPUT_DIR_OUTLIER + config['outlier_ground_truth']['combine_gene_junction']['outlier_outcome']['ground_truth_benchmark'],
         
         spliceai = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai'],
-        spliceai_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap']['gtex_splicemaps']['all'],
-        spliceai_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap_ref_psi']['gtex_splicemaps']['all'],
-        mmsplice_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap']['gtex_splicemaps'],
-        mmsplice_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap_ref_psi']['gtex_splicemaps'],
+        spliceai_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap']['all'],
+        spliceai_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap_ref_psi']['all'],
+        mmsplice_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap'],
+        mmsplice_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap_ref_psi'],
         absplice_dna = expand(OUTPUT_DIR_SPLICING + config['absplice_training']['preds']['dna']['variant_level'], 
                               classifier='{classifier}', feature_string='{feature_string_dna}', abs_features='{abs_features}')[0],
         mmsplice = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice'],
@@ -41,9 +41,9 @@ rule benchmark_combine_dna_var_level:
         cols_mmsplice = [
             'delta_logit_psi'],
         cols_mmsplice_splicemap = [
-            'delta_logit_psi', 'delta_psi', 'median_n', 'ref_psi', 'gene_tpm', 'tissue'],
+            'delta_logit_psi', 'delta_psi', 'median_n', 'ref_psi', 'tissue'],
         cols_mmsplice_splicemap_ref_psi = [
-            'delta_logit_psi', 'delta_psi', 'median_n', 'ref_psi', 'gene_tpm', 'tissue'],
+            'delta_logit_psi', 'delta_psi', 'median_n', 'ref_psi', 'tissue'],
         cols_absplice_dna = [
             'AbSplice_DNA', 'tissue'],
         cols_mtsplice = [
@@ -68,7 +68,7 @@ rule benchmark_combine_dna_var_level:
 rule outlier_variant_category_performance_overall:
     input:
         benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['parts'],
-                           vcf_id=wildcard_vcf_id, tissue=config['gtex_tissues'], 
+                           vcf_id=wildcard_vcf_id, tissue=config['tissues'], 
                            classifier='{classifier}', feature_string_dna='{feature_string_dna}', abs_features='{abs_features}'),
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 64000,
@@ -98,7 +98,7 @@ rule performance_outlier_category:
     output:
         performance_plot = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['performance_outlier_category'],
     script:
-        "./performance_outlier_category.py"
+        "./performance_category.py"
         
         
 rule performance_variant_category:
@@ -111,7 +111,7 @@ rule performance_variant_category:
     output:
         performance_plot = OUTPUT_DIR_BENCHMARK + config['benchmark_var_level']['absplice_model_params'] + config['benchmark_var_level']['benchmark']['performance_variant_category'],
     script:
-        "./performance_variant_category.py"
+        "./performance_category.py"
         
         
 # ===================== STATS NUMBERS =====================
@@ -159,5 +159,18 @@ rule all_variant_and_outlier_categories:
                abs_features=config['absplice_params']['abs_features'],
                feature_string_dna=config['absplice_params']['feature_string_dna'],
                var_category='all',
+               outlier_category=config['outlier_categories'],
+              ),
+
+        expand(rules.performance_outlier_category.output,
+               classifier=config['absplice_params']['classifier'],
+               abs_features=config['absplice_params']['abs_features'],
+               feature_string_dna=config['absplice_params']['feature_string_dna'],
+               var_category=config['var_categories'],
+              ),
+        expand(rules.performance_variant_category.output,
+               classifier=config['absplice_params']['classifier'],
+               abs_features=config['absplice_params']['abs_features'],
+               feature_string_dna=config['absplice_params']['feature_string_dna'],
                outlier_category=config['outlier_categories'],
               ),

@@ -1,31 +1,32 @@
 # Path to adapt by user
 output_dir: 
-    junction_annotation: root_dir/mito/junction_annotation/
-    splicing_preds: root_dir/mito/splicing_predictions/
-    outliers: root_dir/mito/outlier_ground_truth/
-    vcf_annotation: root_dir/mito/vcf_annotation/
-    benchmark: root_dir/mito/benchmark/
+    junction_annotation: ../../data/results/mito/junction_annotation/
+    splicing_preds: ../../data/results/mito/splicing_predictions/
+    outliers: ../../data/results/mito/outlier_ground_truth/
+    vcf_annotation: ../../data/results/mito/vcf_annotation/
+    benchmark: ../../data/results/mito/benchmark/
+    reports: ../../data/mito/reports/
 
 genome: 'hg19'
-fasta: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa
-gtf: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
+fasta: /s/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa
+gtf: /s/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
 
-gene_tpm_dataset: root_dir/hg19/gene_expression_tpm/Prokisch_Fibroblasts_tpm.csv
+gene_tpm_dataset: ../../data/resources/common/hg19/gene_expression_tpm/Prokisch_Fibroblasts_tpm.csv
 
-vcf: root_dir/vcf_processing/mito/per_chrom/{vcf_id}.vcf.gz
+vcf: ../../data/resources/mito/vcf_normalized/{vcf_id}.vcf.gz
 
 DROP:
-    outlier_ground_truth_all: root_dir/mito/processed_results/aberrant_splicing/results/v29/fraser/
-    tissue_map: root_dir/mito/tissue_map_DROP.csv
-    sample_annotation: root_dir/mito/sample_anno_prokisch_updated_fib_all_new_results.tsv
+    outlier_ground_truth_all: ../../data/resources/mito/DROP/processed_results/aberrant_splicing/results/v29/fraser/
+    tissue_map: ../../data/resources/mito/tissue_map_DROP.csv
+    sample_annotation: ../../data/resources/mito/sample_annotation_drop.tsv
     version: 'v29'
     splicemap:
-        working_dir: root_dir/mito/processed_data/aberrant_splicing/datasets/
+        working_dir: ../../data/resources/mito/DROP/processed_data/aberrant_splicing/datasets/
     outlier:
         splicing:
-            working_dir: root_dir/mito/processed_results/aberrant_splicing/datasets/
+            working_dir: ../../data/resources/mito/DROP/processed_results/aberrant_splicing/datasets/
         expression:
-            working_dir: root_dir/mito/processed_results/aberrant_expression/
+            working_dir: ../../data/resources/mito/DROP/processed_results/aberrant_expression/
             
 # Not to change by user
 filtering_params:
@@ -65,16 +66,38 @@ method: 'kn'
 event_filter: 'median_cutoff'
 gtex_version: 'gtex_v7'
 
-tissues_cat: 
+use_gene_tpm: False 
+
+tissue_map_subset: ../../data/resources/gtex_v7/tissue_map_main_tissue.csv
+
+models:
+    - spliceai
+    # - mmsplice
+
+    # - mtsplice
+    # - cadd_splice
+    - mmsplice_splicemap
+    - mmsplice_splicemap_ref_psi
+    - spliceai_splicemap
+    - spliceai_splicemap_ref_psi
+    - absplice_dna
+
+tissues_cat:
     - Prokisch_Fibroblasts
-    
-tissue_dataset: 'Prokisch_Fibroblasts'
 
-tissue_subsets_for_pred:
+tissues_subset:
     - Cells_Cultured_fibroblasts
 
-gtex_tissues:
+tissue_target: Prokisch_Fibroblasts
+tissue_dataset: Prokisch_Fibroblasts
+
+splicemap_tissues:
+    - Prokisch_Fibroblasts
+
+tissues:
+    - Prokisch_Fibroblasts
     - Cells_Cultured_fibroblasts
+
     
 sampleIDs:
     - 33254G
@@ -121,7 +144,7 @@ chroms:
   - 'chr20'
   - 'chr21'  
   - 'chr22'
-  - 'chrX'
+#   - 'chrX'
 
     
 

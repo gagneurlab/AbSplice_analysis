@@ -11,10 +11,6 @@ if snakemake.params['update_samples']:
         key_assay=snakemake.params['key_assay'],                           
         value_assay=snakemake.params['value_assay']))
 
-if snakemake.params['subset_chroms']:
-    ct = ct[ct['Chromosome'].isin(
-        snakemake.params['chroms'])]
-
 # if snakemake.params['remove_chr_from_chrom_annotation']:
 #     ct.df['Chromosome'] = ct.df['Chromosome'].str.replace('chr', '')
     

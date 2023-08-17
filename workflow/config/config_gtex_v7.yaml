@@ -1,9 +1,10 @@
 output_dir:
-    junction_annotation: root_dir/gtex_v7/junction_annotation/
-    splicing_preds: root_dir/gtex_v7/splicing_predictions/
-    outliers: root_dir/gtex_v7/outlier_ground_truth/
-    vcf_annotation: root_dir/gtex_v7/vcf_annotation/
-    benchmark: root_dir/gtex_v7/benchmark/
+    junction_annotation: ../../data/results/gtex_v7/junction_annotation/
+    splicing_preds: ../../data/results/gtex_v7/splicing_predictions/
+    outliers: ../../data/results/gtex_v7/outlier_ground_truth/
+    vcf_annotation: ../../data/results/gtex_v7/vcf_annotation/
+    benchmark: ../../data/results/gtex_v7/benchmark/
+    reports: ../../data/gtex_v7/reports/
 
 
 filtering_params:
@@ -40,31 +41,31 @@ filtering_params:
 
 
 genome: 'hg19'
-fasta: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa
-gtf: root_dir/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
+fasta: /s/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/GRCh37.primary_assembly.genome.fa
+gtf: /s/genomes/Gencode/Gencode_human/release_34/GRCh37_mapping/gencode.v34lift37.annotation.gtf.gz
 
-vcf: root_dir/vcf_processing/gtex_v7/vcf_normalized/{vcf_id}.vcf.gz
+vcf: ../../data/resources/gtex_v7/vcf_normalized/{vcf_id}.vcf.gz
 
 gene_expression: 
-  raw: root_dir/common/hg19/gene_expression_tpm/raw_median_tpm.gz
+  raw: ../../data/resources/common/hg19/gene_expression_tpm/raw_median_tpm.gz
 
 DROP:
-    tissue_map: root_dir/gtex_v7/tissue_map_DROP.csv
-    sample_annotation: root_dir/gtex_v7/sample_annotation.tsv
+    tissue_map: ../../data/resources/gtex_v7/tissue_map_DROP.csv
+    sample_annotation: ../../data/resources/gtex_v7/DROP/sample_annotation.tsv
     version: 'v29'
     splicemap:
-        working_dir: root_dir/gtex_v7/processed_data/aberrant_splicing/datasets/
+        working_dir: ../../data/resources/gtex_v7/DROP/processed_data/aberrant_splicing/datasets/
     outlier:
         splicing:
-            working_dir: root_dir/gtex_v7/processed_results/aberrant_splicing/datasets/ 
+            working_dir: ../../data/resources/gtex_v7/DROP/processed_results/aberrant_splicing/datasets/ 
         expression:
-            working_dir: root_dir/gtex_v7/processed_results/aberrant_expression/datasets/
+            working_dir: ../../data/resources/gtex_v7/DROP/processed_results/aberrant_expression/datasets/
    
 method: 'kn'
 event_filter: 'median_cutoff'
 gtex_version: 'gtex_v7'
   
-gtex_tissues:
+splicemap_tissues:
     - Adipose_Subcutaneous
     - Adipose_Visceral_Omentum
     - Adrenal_Gland
@@ -138,4 +139,4 @@ chroms:
   - 'chr20'
   - 'chr21'  
   - 'chr22'
-  - 'chrX'
+#   - 'chrX'

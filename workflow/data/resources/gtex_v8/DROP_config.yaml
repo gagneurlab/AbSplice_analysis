@@ -1,0 +1,16 @@
+gtf file: hg38 gencode.v34.annotation.gtf.gz
+
+aberrantSplicing:
+  run: true
+  groups: null # this will run all tissues
+  minIds: 10
+  keepNonStandardChrs: false
+  recount: false
+  longRead: false
+  filter: true
+  minExpressionInOneSample: 20
+  minDeltaPsi: 0
+  correction: PCA
+  deltaPsiCutoff : 0.3
+  padjCutoff: 0.1
+  maxTestedDimensionProportion: 6

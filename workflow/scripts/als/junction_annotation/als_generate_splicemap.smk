@@ -50,8 +50,8 @@ rule als_generate_splicemap:
         ntasks = 1,
         threads = 10
     output:
-        splicemap_psi5 = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['splicemap']['psi5'],
-        splicemap_psi3 = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['splicemap']['psi3'],
+        splicemap_psi5 = config_static['junction_annotation']['splicemap']['psi5'],
+        splicemap_psi3 = config_static['junction_annotation']['splicemap']['psi3'],
     script:
         "./generate_splicemap.py"
         
@@ -59,4 +59,4 @@ rule als_generate_splicemap:
 rule all_als_generate_splicemap:
     input:
         expand(rules.als_generate_splicemap.output,
-               tissue=config['tissue_dataset']),
+               tissue=config['splicemap_tissues'], genome=config['genome']),

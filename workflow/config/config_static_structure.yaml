@@ -42,62 +42,49 @@ junction_annotation:
         private: train_test/private/{tissue}_private_variants.csv
         tissue: train_test/matrix/{tissue}_test.csv
     splicemap:
-        psi5: splicemap/{tissue}_splicemap_psi5.csv.gz
-        psi3: splicemap/{tissue}_splicemap_psi3.csv.gz
+        psi5: ../../data/results/splicemap/{genome}/{tissue}_splicemap_psi5.csv.gz
+        psi3: ../../data/results/splicemap/{genome}/{tissue}_splicemap_psi3.csv.gz
  
  
 splicing_pred:
     levels:
         raw: raw_pred/
+        postprocess: postprocess/
         gene_level: gene_level/
         variant_level: variant_level/
         combined_input: combined_input_for_absplice/
-        tissue_subset: gtex_tissue_subset/gtex_tissue={gtex_tissue}/
+        tissue_subset: tissue_subset/tissue_pred={tissue_pred}/
+        benchmark: 
+            input: benchmark/input/
+            performance: benchmark/performance/
     models:
         spliceai: spliceai/{vcf_id}_spliceai.parquet
         spliceai_splicemap:
-            gtex_splicemaps:
-                tissue: spliceai_splicemap/gtex_splicemaps/tissue/{vcf_id}_spliceai_splicemap_tissue={tissue}.parquet
-                all: spliceai_splicemap/gtex_splicemaps/all/{vcf_id}_spliceai_splicemap.parquet
-            dataset_splicemap:
-                tissue: spliceai_splicemap/dataset_splicemap/tissue/{vcf_id}_spliceai_splicemap_tissue={tissue}.parquet
-                all: spliceai_splicemap/dataset_splicemap/all/{vcf_id}_spliceai_splicemap.parquet
+            tissue: spliceai_splicemap/tissue/{vcf_id}_spliceai_splicemap_tissue={tissue}.parquet
+            all: spliceai_splicemap/all/{vcf_id}_spliceai_splicemap.parquet
         spliceai_splicemap_ref_psi:
-            gtex_splicemaps:
-                tissue: spliceai_splicemap_ref_psi/gtex_splicemaps/tissue/{vcf_id}_spliceai_splicemap_tissue={tissue}.parquet
-                all: spliceai_splicemap_ref_psi/gtex_splicemaps/all/{vcf_id}_spliceai_splicemap.parquet
-            dataset_splicemap:
-                tissue: spliceai_splicemap_ref_psi/dataset_splicemap/tissue/{vcf_id}_spliceai_splicemap_tissue={tissue}.parquet
-                all: spliceai_splicemap_ref_psi/dataset_splicemap/all/{vcf_id}_spliceai_splicemap.parquet
+            tissue: spliceai_splicemap_ref_psi/tissue/{vcf_id}_spliceai_splicemap_tissue={tissue}.parquet
+            all: spliceai_splicemap_ref_psi/all/{vcf_id}_spliceai_splicemap.parquet
         mmsplice: mmsplice/{vcf_id}_mmsplice.parquet
-        mmsplice_splicemap:
-            gtex_splicemaps: mmsplice_splicemap/gtex_splicemaps/{vcf_id}_mmsplice_splicemap.parquet
-            dataset_splicemap: mmsplice_splicemap/dataset_splicemap/{vcf_id}_mmsplice_splicemap.parquet
-        mmsplice_splicemap_ref_psi:
-            gtex_splicemaps: mmsplice_splicemap_ref_psi/gtex_splicemaps/{vcf_id}_mmsplice_splicemap_ref_psi.parquet
-            dataset_splicemap: mmsplice_splicemap_ref_psi/dataset_splicemap/{vcf_id}_mmsplice_splicemap_ref_psi.parquet
+        mmsplice_splicemap: mmsplice_splicemap/{vcf_id}_mmsplice_splicemap.parquet
+        mmsplice_splicemap_ref_psi: mmsplice_splicemap_ref_psi/{vcf_id}_mmsplice_splicemap_ref_psi.parquet
         mmsplice_splicemap_cat: 
-            gtex_splicemaps: 
-                single_cat: mmsplice_splicemap_cat/gtex_splicemaps/{vcf_id}_mmsplice_splicemap_cat={tissue_cat}.parquet
-                all_cats: mmsplice_splicemap_cat/gtex_splicemaps/all_cats/{vcf_id}_mmsplice_splicemap_all_cats.parquet
-            dataset_splicemap: 
-                single_cat: mmsplice_splicemap_cat/dataset_splicemap/{vcf_id}_mmsplice_splicemap_cat={tissue_cat}.parquet
-                all_cats: mmsplice_splicemap_cat/dataset_splicemap/all_cats/{vcf_id}_mmsplice_splicemap_all_cats.parquet
+            single_cat: mmsplice_splicemap_cat/{vcf_id}_mmsplice_splicemap_cat={tissue_cat}.parquet
+            all_cats: mmsplice_splicemap_cat/all_cats/{vcf_id}_mmsplice_splicemap_all_cats.parquet
         mtsplice: mtsplice/{vcf_id}_mtsplice.parquet
         cadd_splice: cadd_splice/{vcf_id}_cadd_splice.tsv.gz
-        squirls: squirls/{vcf_id}_squirls.csv
+        squirls_raw: squirls_raw/{vcf_id}_squirls.csv
+        squirls: squirls/{vcf_id}_squirls.parquet
         absplice:
-            gtex_splicemaps:
-                dna: absplice/gtex_splicemaps/dna/{vcf_id}_absplice_dna.parquet
-                rna:
-                    single_cat: absplice/gtex_splicemaps/rna/single_cat/{vcf_id}_absplice_rna_single_cat={tissue_cat}.parquet
-                    all_cats: absplice/gtex_splicemaps/rna/all_cats/{vcf_id}_absplice_rna_all_cats.parquet
-            dataset_splicemap:
-                dna: absplice/dataset_splicemap/dna/{vcf_id}_absplice_dna.parquet
-                rna:
-                    single_cat: absplice/dataset_splicemap/rna/single_cat/{vcf_id}_absplice_rna_single_cat={tissue_cat}.parquet
-                    all_cats: absplice/dataset_splicemap/rna/all_cats/{vcf_id}_absplice_rna_all_cats.parquet
- 
+            dna: absplice/dna/{vcf_id}_absplice_dna.parquet
+            dna_no_samples: absplice/dna_no_samples/{vcf_id}_absplice_dna.parquet
+            rna:
+                single_cat: absplice/rna/single_cat/{vcf_id}_absplice_rna_single_cat={tissue_cat}.parquet
+                all_cats: absplice/rna/all_cats/{vcf_id}_absplice_rna_all_cats.parquet
+        absplice_extra_info:
+            dna: absplice_extra_info/dna/{vcf_id}_absplice_dna.parquet
+            dna_no_samples: absplice_extra_info/dna_no_samples/{vcf_id}_absplice_dna.parquet
+
  
 
 benchmark:
@@ -108,59 +95,31 @@ benchmark:
     universe_cat: universe_cat/universe_with_cat_samples/{vcf_id}_tissue={tissue}_rare_variants_on_genes.csv
     
     combined_benchmark: 
-        gtex_splicemaps:
-            dna: combined_benchmark/gtex_splicemaps/dna/{vcf_id}_tissue={tissue}_gtex_tissue={gtex_tissue}_combined_benchmark_dna.parquet
-            rna: 
-                single_cat: combined_benchmark/gtex_splicemaps/rna/single_cat={tissue_cat}/{vcf_id}_tissue={tissue}_gtex_tissue={gtex_tissue}_combined_benchmark_rna_cat={tissue_cat}.parquet
-                all_cats: combined_benchmark/gtex_splicemaps/rna/all_cats/{vcf_id}_tissue={tissue}_gtex_tissue={gtex_tissue}_combined_benchmark_rna_all_cats.parquet
-        dataset_splicemap:
-            dna: combined_benchmark/dataset_splicemap/dna/{vcf_id}_tissue={tissue}_combined_benchmark_dna.parquet
-            rna: 
-                single_cat: combined_benchmark/dataset_splicemap/rna/single_cat={tissue_cat}/{vcf_id}_tissue={tissue}_combined_benchmark_rna_cat={tissue_cat}.parquet
-                all_cats: combined_benchmark/dataset_splicemap/rna/all_cats/{vcf_id}_tissue={tissue}_combined_benchmark_rna_all_cats.parquet
+        dna: combined_benchmark/dna/{vcf_id}_tissue={tissue}_tissue_pred={tissue_pred}_combined_benchmark_dna.parquet
+        rna: 
+            single_cat: combined_benchmark/rna/single_cat={tissue_cat}/{vcf_id}_tissue={tissue}_tissue_pred={tissue_pred}_combined_benchmark_rna_cat={tissue_cat}.parquet
+            all_cats: combined_benchmark/rna/all_cats/{vcf_id}_tissue={tissue}_tissue_pred={tissue_pred}_combined_benchmark_rna_all_cats.parquet
                 
-    performance:
-        gtex_splicemaps:
-            dna: 
-                df: performance/gtex_splicemaps/dna/single_tissue/performance_tissue={tissue}_gtex_tissue={gtex_tissue}_df.csv
-                aps: performance/gtex_splicemaps/dna/single_tissue/performance_tissue={tissue}_gtex_tissue={gtex_tissue}_aps.pkl 
-        dataset_splicemap:
-            dna: 
-                df: performance/dataset_splicemap/dna/all_tissues/performance_tissue={tissue}_df.csv
-                aps: performance/dataset_splicemap/dna/all_tissues/performance_tissue={tissue}_aps.pkl
+    performance: # TODO: maybe add tissue_target and tissue_pred
+        dna: 
+            df: performance/dna/all_tissues/performance_tissue={tissue}_tissue_pred={tissue_pred}_df.csv
+            aps: performance/dna/all_tissues/performance_tissue={tissue}_tissue_pred={tissue_pred}_aps.pkl
             
     jackknife_performance:
         auPRC:
-            gtex_splicemaps:
-                dna: jackknife_performance/gtex_splicemaps/dna/auPRC/tissue={tissue}_gtex_tissue={gtex_tissue}_jackknife_performance_dna.csv
-                rna:
-                    single_cat: jackknife_performance/gtex_splicemaps/rna/single_cat={tissue_cat}/auPRC/tissue={tissue}_gtex_tissue={gtex_tissue}_jackknife_performance_rna_cat={tissue_cat}.csv
-                    all_cats: jackknife_performance/gtex_splicemaps/rna/all_cats/auPRC/tissue={tissue}_gtex_tissue={gtex_tissue}_jackknife_performance_rna_all_cats.csv
-            dataset_splicemap:
-                dna: jackknife_performance/dataset_splicemap/dna/auPRC/tissue={tissue}_jackknife_performance_dna.csv
-                rna:
-                    single_cat: jackknife_performance/dataset_splicemap/rna/single_cat={tissue_cat}/auPRC/tissue={tissue}_jackknife_performance_rna_cat={tissue_cat}.csv
-                    all_cats: jackknife_performance/dataset_splicemap/rna/all_cats/auPRC/tissue={tissue}_jackknife_performance_rna_all_cats.csv
+            dna: jackknife_performance/dna/auPRC/tissue={tissue}_tissue_pred={tissue_pred}_jackknife_performance_dna.csv
+            rna:
+                single_cat: jackknife_performance/rna/single_cat={tissue_cat}/auPRC/tissue={tissue}_tissue_pred={tissue_pred}_jackknife_performance_rna_cat={tissue_cat}.csv
+                all_cats: jackknife_performance/rna/all_cats/auPRC/tissue={tissue}_tissue_pred={tissue_pred}_jackknife_performance_rna_all_cats.csv
         stats:
-            gtex_splicemaps:
-                dna: jackknife_performance/gtex_splicemaps/dna/stats/tissue={tissue}_gtex_tissue={gtex_tissue}_jackknife_performance_dna.csv
-                rna:
-                    single_cat: jackknife_performance/gtex_splicemaps/rna/single_cat={tissue_cat}/stats/tissue={tissue}_gtex_tissue={gtex_tissue}_jackknife_performance_rna_cat={tissue_cat}.csv
-                    all_cats: jackknife_performance/gtex_splicemaps/rna/all_cats/stats/tissue={tissue}_gtex_tissue={gtex_tissue}_jackknife_performance_rna_all_cats.csv
-            dataset_splicemap:
-                dna: jackknife_performance/dataset_splicemap/dna/stats/tissue={tissue}_jackknife_performance_dna.csv
-                rna:
-                    single_cat: jackknife_performance/dataset_splicemap/rna/single_cat={tissue_cat}/stats/tissue={tissue}_jackknife_performance_rna_cat={tissue_cat}.csv
-                    all_cats: jackknife_performance/dataset_splicemap/rna/stats/tissue={tissue}_jackknife_performance_rna_all_cats.csv
+            dna: jackknife_performance/dna/stats/tissue={tissue}_tissue_pred={tissue_pred}_jackknife_performance_dna.csv
+            rna:
+                single_cat: jackknife_performance/rna/single_cat={tissue_cat}/stats/tissue={tissue}_tissue_pred={tissue_pred}_jackknife_performance_rna_cat={tissue_cat}.csv
+                all_cats: jackknife_performance/rna/stats/tissue={tissue}_tissue_pred={tissue_pred}_jackknife_performance_rna_all_cats.csv
                     
     
     tp_preds_among_total_preds:
-        gtex_splicemaps:
-            dna:
-                line: tp_preds_among_total_preds/gtex_splicemaps/dna/tissue={tissue}_gtex_tissue={gtex_tissue}_line.csv
-                discrete_cutoff: tp_preds_among_total_preds/gtex_splicemaps/dna/tissue={tissue}_gtex_tissue={gtex_tissue}_discrete_cutoff.csv
-        dataset_splicemap:
-            dna:
-                line: tp_preds_among_total_preds/dataset_splicemap/dna/tissue={tissue}_gtex_tissue={gtex_tissue}_line.csv
-                discrete_cutoff: tp_preds_among_total_preds/dataset_splicemap/dna/tissue={tissue}_gtex_tissue={gtex_tissue}_discrete_cutoff.csv
+        dna:
+            line: tp_preds_among_total_preds/dna/tissue={tissue}_tissue_pred={tissue_pred}_line.csv
+            discrete_cutoff: tp_preds_among_total_preds/dna/tissue={tissue}_tissue_pred={tissue_pred}_discrete_cutoff.csv
 

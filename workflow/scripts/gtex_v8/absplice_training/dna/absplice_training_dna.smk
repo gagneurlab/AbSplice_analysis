@@ -11,7 +11,7 @@ rule absplice_dna_training_input:
     input:
         universe = OUTPUT_DIR_BENCHMARK + config_static['benchmark']['universe'],
         outliers = OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['variant_nearest_outlier']['parts_rare_var_dist_variant_level'],
-        absplice_input = ABSPLICE_INPUT_DIR + config_static['splicing_pred']['models']['absplice']['gtex_splicemaps']['dna'],
+        absplice_input = ABSPLICE_INPUT_DIR + config_static['splicing_pred']['models']['absplice']['dna'],
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 16000,
     params:
@@ -38,7 +38,7 @@ rule absplice_dna_training_input_subset:
 rule absplice_dna_input_complete:
     input:
         absplice_input = expand(OUTPUT_DIR_SPLICING + config['absplice_training']['training_input_subset']['dna'],
-                                tissue=config['gtex_tissues'], vcf_id=wildcard_vcf_id)
+                                tissue=config['tissues'], vcf_id=wildcard_vcf_id)
     output:
         absplice_input = OUTPUT_DIR_SPLICING + config['absplice_training']['training_input_complete']['dna']
     run:

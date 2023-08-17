@@ -39,7 +39,7 @@ plot_pr_curve <- function(df, color_list, ylim=0.2, breaks_x=0.2, minor_breaks_x
     + geom_step(direction = "vh")
     + scale_color_manual(values=color_list, guide=guide_legend(reverse = TRUE))
     + theme_cowplot(font_size = fontsize)
-    # + background_grid(major = "xy", minor = "xy")
+    + background_grid(major = "xy", minor = "xy")
     + scale_x_continuous(limits = c(-0.01, 1.05), breaks = seq(0, 1, breaks_x), minor_breaks = seq(0, 1, minor_breaks_x))
     + scale_y_continuous(limits = c(-0.01, ylim), breaks = seq(0, 1, breaks_y), minor_breaks = seq(0, 1, minor_breaks_y))
     + theme(
@@ -167,9 +167,9 @@ absplice_model_colors = c(
 tissue_mapping = c(
   'Adipose_Subcutaneous' = "Adipose Subcutaneous",
   'Adipose_Visceral_Omentum' = "Adipose Visceral Omentum",
-  'Adrenal_Gland' = "Adrenal Gland",   
+  'Adrenal_Gland' = "Adrenal Gland",
   'Artery_Aorta' ="Artery Aorta",
-  'Artery_Coronary' = "Artery Coronary", 
+  'Artery_Coronary' = "Artery Coronary",
   'Artery_Tibial' = "Artery Tibial",
   'Brain_Amygdala' = 'Brain Amygdala',
   'Brain_Anterior_cingulate_cortex_BA24' = 'Brain Ant. cing. cortex BA24',
@@ -190,7 +190,7 @@ tissue_mapping = c(
   'Esophagus_Gastroesophageal_Junction' = 'Esophagus GJ',
   'Esophagus_Mucosa' = 'Esophagus Mucosa',
   'Esophagus_Muscularis' = 'Esophagus Muscularis',
-  'Heart_Atrial_Appendage' = 'Heart Atrial Appendage', 
+  'Heart_Atrial_Appendage' = 'Heart Atrial Appendage',
   'Heart_Left_Ventricle' = 'Heart Left Ventricle',
   'Kidney_Cortex' = 'Kidney Cortex',
   'Liver' = 'Liver',
@@ -216,4 +216,58 @@ tissue_mapping = c(
   'Cells_EBV_transformed_lymphocytes' = 'Lymphocytes',
   'Whole_Blood' = 'Blood'
 )
+
+
+# tissue_mapping = c(
+#     'Adipose_Subcutaneous' = 'Adipose - Subcutaneous',
+#     'Adipose_Visceral_Omentum' = 'Adipose - Visceral (Omentum)',
+#     'Adrenal_Gland' = 'Adrenal Gland',
+#     'Artery_Aorta' = 'Artery - Aorta',
+#     'Artery_Coronary' = 'Artery - Coronary',
+#     'Artery_Tibial' = 'Artery - Tibial',
+#     'Brain_Amygdala' = 'Brain - Amygdala',
+#     'Brain_Anterior_cingulate_cortex_BA24' = 'Brain - Ant. cing. cortex (BA24)',
+#     'Brain_Caudate_basal_ganglia' = 'Brain - Caudate (basal ganglia)',
+#     'Brain_Cerebellar_Hemisphere' = 'Brain - Cerebellar Hemisphere',
+#     'Brain_Cerebellum' = 'Brain - Cerebellum',
+#     'Brain_Cortex' = 'Brain - Cortex',
+#     'Brain_Frontal_Cortex_BA9' = 'Brain - Frontal Cortex (BA9)',
+#     'Brain_Hippocampus' = 'Brain - Hippocampus',
+#     'Brain_Hypothalamus' = 'Brain - Hypothalamus',
+#     'Brain_Nucleus_accumbens_basal_ganglia' = 'Brain - Nuc. acc. (basal ganglia)',
+#     'Brain_Putamen_basal_ganglia' = 'Brain - Putamen (basal ganglia)',
+#     'Brain_Spinal_cord_cervical_c_1' = 'Brain - Spinal cord (cervical c-1)',
+#     'Brain_Substantia_nigra' = 'Brain - Substantia nigra',
+#     'Breast_Mammary_Tissue' = 'Breast - Mammary Tissue',
+#     'Colon_Sigmoid' = 'Colon - Sigmoid',
+#     'Colon_Transverse' = 'Colon - Transverse',
+#     'Esophagus_Gastroesophageal_Junction' = 'Esophagus - GJ',
+#     'Esophagus_Mucosa' = 'Esophagus - Mucosa',
+#     'Esophagus_Muscularis' = 'Esophagus - Muscularis',
+#     'Heart_Atrial_Appendage' = 'Heart - Atrial Appendage',
+#     'Heart_Left_Ventricle' = 'Heart - Left Ventricle',
+#     'Kidney_Cortex' = 'Kidney - Cortex',
+#     'Liver' = 'Liver',
+#     'Lung' = 'Lung',
+#     'Minor_Salivary_Gland' = 'Minor Salivary Gland',
+#     'Muscle_Skeletal' = 'Muscle - Skeletal',
+#     'Nerve_Tibial' = 'Nerve - Tibial',
+#     'Ovary' = 'Ovary',
+#     'Pancreas' = 'Pancreas',
+#     'Pituitary' = 'Pituitary',
+#     'Prostate' = 'Prostate',
+#     'Skin_Not_Sun_Exposed_Suprapubic' = 'Skin - Not Sun Exposed',
+#     'Skin_Sun_Exposed_Lower_leg' = 'Skin - Sun Exposed',
+#     'Small_Intestine_Terminal_Ileum' = 'Small Intestine',
+#     'Spleen' = 'Spleen',
+#     'Stomach' = 'Stomach',
+#     'Testis' = 'Testis',
+#     'Thyroid' = 'Thyroid',
+#     'Uterus' = 'Uterus',
+#     'Vagina' = 'Vagina',
+#     'allBrainTissues' = 'Brain',
+#     'Cells_Cultured_fibroblasts' = 'Fibroblasts',
+#     'Cells_EBV_transformed_lymphocytes' = 'Lymphocytes',
+#     'Whole_Blood' = 'Blood'
+# )
 

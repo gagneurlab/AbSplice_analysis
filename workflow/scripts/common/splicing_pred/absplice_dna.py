@@ -1,5 +1,5 @@
 import pandas as pd
-from splicing_outlier_prediction import SplicingOutlierResult
+from absplice import SplicingOutlierResult
 
 features_dna = sorted([
     'delta_psi', 'delta_score', 'splice_site_is_expressed', 'delta_logit_psi'
@@ -12,9 +12,10 @@ result = SplicingOutlierResult(
 result.predict_absplice_dna(
     pickle_file=snakemake.input['absplice_model'],
     median_n_cutoff=snakemake.params['median_n_cutoff'],  
-    tpm_cutoff=snakemake.params['tpm_cutoff'],
+    # tpm_cutoff=snakemake.params['tpm_cutoff'],
     features=features_dna, 
-    abs_features=False
+    abs_features=False,
+    extra_info=False    
 )
 
 # result._absplice_dna.to_csv(snakemake.output['absplice_dna_pred'])

@@ -22,8 +22,8 @@ rule generate_splicemap:
         ntasks = 1,
         threads = 1
     output:
-        splicemap_psi5 = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['splicemap']['psi5'],
-        splicemap_psi3 = OUTPUT_DIR_JUNCTION_ANNO + config_static['junction_annotation']['splicemap']['psi3'],
+        splicemap_psi5 = config_static['junction_annotation']['splicemap']['psi5'],
+        splicemap_psi3 = config_static['junction_annotation']['splicemap']['psi3'],
     script:
         "../generate_splicemap.py"
         
@@ -31,5 +31,5 @@ rule generate_splicemap:
 rule all_generate_splicemap:
     input:
         expand(rules.generate_splicemap.output,
-               tissue=config['gtex_tissues']),
+               tissue=config['splicemap_tissues'], genome=config['genome']),
     

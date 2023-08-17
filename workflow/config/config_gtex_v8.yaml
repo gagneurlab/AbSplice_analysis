@@ -1,34 +1,39 @@
 # Path to adapt by user
 output_dir:
-    junction_annotation: root_dir/gtex_v8/junction_annotation/
-    splicing_preds: root_dir/gtex_v8/splicing_predictions/
-    outliers: root_dir/gtex_v8/outlier_ground_truth/
-    vcf_annotation: root_dir/gtex_v8/vcf_annotation/
-    benchmark: root_dir/gtex_v8/benchmark/    
+    junction_annotation: ../../data/results/gtex_v8/junction_annotation/
+    splicing_preds: ../../data/results/gtex_v8/splicing_predictions/
+    outliers: ../../data/results/gtex_v8/outlier_ground_truth/
+    vcf_annotation: ../../data/results/gtex_v8/vcf_annotation/
+    benchmark: ../../data/results/gtex_v8/benchmark/
+    reports: ../../data/gtex_v8/reports/
+    
     
 DROP:
-    outlier_ground_truth_all: root_dir/gtex_v8/processed_results/aberrant_splicing/results/gencode38/fraser/
-    tissue_map: root_dir/gtex_v8/tissue_map_DROP.csv
-    sample_annotation: root_dir/gtex_v8/sample_annotation.tsv
-    version: 'gencode38'
+    outlier_ground_truth_all: ../../data/resources/gtex_v8/DROP/processed_results/aberrant_splicing/results/gencode29/fraser/
+    tissue_map: ../../data/results/gtex_v8/tissue_map_DROP.csv
+    sample_annotation: ../../data/resources/gtex_v8/DROP/sample_annotation.tsv
+    version: 'gencode34'
     splicemap:
-        working_dir: root_dir/gtex_v8/processed_data/aberrant_splicing/datasets/
+        working_dir: ../../data/resources/gtex_v8/DROP/processed_data/aberrant_splicing/datasets/
     outlier:
         splicing:
-            working_dir: root_dir/gtex_v8/processed_results/aberrant_splicing/datasets/ 
+            working_dir: ../../data/resources/gtex_v8/DROP/processed_results/aberrant_splicing/datasets/ 
         expression:
-            working_dir: root_dir/gtex_v8/processed_results/aberrant_expression/
+            working_dir: ../../data/resources/gtex_v8/DROP/processed_results/aberrant_expression/
 
 genome: 'hg38'
 fasta: root_dir/genomes/human/hg38/gencode.v38/GRCh38.primary_assembly.genome.fa
 gtf: root_dir/genomes/human/hg38/gencode.v38/gencode.v38.annotation.gtf
 
-vcf: root_dir/vcf_processing/gtex_v8/vcf_normalized/{vcf_id}.vcf.gz
+vcf: ../../data/resources/gtex_v8/vcf_normalized/{vcf_id}.vcf.gz
 
-vep_anno: root_dir/gtex_v8_hg38/VEP.parquet/rare_variants.vcf.parquet/chrom={vcf_id}
+vep_anno: ../../data/resources/gtex_v8/VEP/chrom={vcf_id}
 
 gene_expression: 
-  raw: root_dir/common/hg38/gene_expression_tpm/raw_median_tpm.gz
+  raw: ../../data/resources/common/hg38/gene_expression_tpm/raw_median_tpm.gz
+
+tissue_map_subset: ../../data/resources/gtex_v8/tissue_map_main_tissue.csv
+gene_tpm_gtex: ../../data/results/gtex_v8/junction_annotation/gene_tpm.csv
   
 
 # Not to change by user
@@ -77,16 +82,6 @@ outlier_ground_truth:
             parts_rare_var_dist_variant_level: combine_gene_junction/outlier_outcome/rare_var_dist_variant_level/{vcf_id}_tissue={tissue}_outliers_with_outcome.csv
             ground_truth_benchmark: combine_gene_junction/outlier_outcome/ground_truth_benchmark/{vcf_id}_tissue={tissue}_outliers_with_outcome.csv
             
-tissues_cat:
-    - Cells_Cultured_fibroblasts
-    - Whole_Blood
-    - Cells_EBV_transformed_lymphocytes
-
-cat_pairing:
-    - 'Cells_Cultured_fibroblasts'
-    - 'Whole_Blood'
-    - 'Cells_EBV_transformed_lymphocytes'
-    - 'Cells_Cultured_fibroblasts__Whole_Blood'
 
 spliceai:
     lookup_only: False
@@ -104,8 +99,93 @@ absplice_params:
         - delta_logit_psi__delta_psi__delta_score__splice_site_is_expressed
     feature_string_rna:
         - delta_logit_psi__delta_psi__delta_psi_cat__delta_score__pValueGene_g_minus_log10__splice_site_is_expressed
+
+use_gene_tpm: True 
+
+models:
+    - spliceai
+    - mmsplice
+
+    - mtsplice
+    - cadd_splice
+    - mmsplice_splicemap
+    - mmsplice_splicemap_ref_psi
+    - spliceai_splicemap
+    - spliceai_splicemap_ref_psi
+    - absplice_dna_input
+
+    - cat_infer_single
+    - absplice_rna_single_input
+    - cat_infer_all
+    - absplice_rna_all_input
     
-gtex_tissues:
+tissues_cat:
+    - Cells_Cultured_fibroblasts
+    - Whole_Blood
+    - Cells_EBV_transformed_lymphocytes
+
+cat_pairing:
+    - 'Cells_Cultured_fibroblasts'
+    - 'Whole_Blood'
+    - 'Cells_EBV_transformed_lymphocytes'
+    - 'Cells_Cultured_fibroblasts__Whole_Blood'
+
+tissues_subset:
+    - Brain
+
+tissues:
+    - Adipose_Subcutaneous
+    - Adipose_Visceral_Omentum
+    - Adrenal_Gland
+    - Artery_Aorta
+    - Artery_Coronary
+    - Artery_Tibial
+    - Brain_Amygdala
+    - Brain_Anterior_cingulate_cortex_BA24
+    - Brain_Caudate_basal_ganglia
+    - Brain_Cerebellar_Hemisphere
+    - Brain_Cerebellum
+    - Brain_Cortex
+    - Brain_Frontal_Cortex_BA9
+    - Brain_Hippocampus
+    - Brain_Hypothalamus
+    - Brain_Nucleus_accumbens_basal_ganglia
+    - Brain_Putamen_basal_ganglia
+    - Brain_Spinal_cord_cervical_c_1
+    - Brain_Substantia_nigra
+    - Breast_Mammary_Tissue
+    - Cells_Cultured_fibroblasts
+    - Cells_EBV_transformed_lymphocytes
+    - Colon_Sigmoid
+    - Colon_Transverse
+    - Esophagus_Gastroesophageal_Junction
+    - Esophagus_Mucosa
+    - Esophagus_Muscularis
+    - Heart_Atrial_Appendage
+    - Heart_Left_Ventricle
+    - Kidney_Cortex
+    - Liver
+    - Lung
+    - Minor_Salivary_Gland
+    - Muscle_Skeletal
+    - Nerve_Tibial
+    - Ovary
+    - Pancreas
+    - Pituitary
+    - Prostate
+    - Skin_Not_Sun_Exposed_Suprapubic
+    - Skin_Sun_Exposed_Lower_leg
+    - Small_Intestine_Terminal_Ileum
+    - Spleen
+    - Stomach
+    - Testis
+    - Thyroid
+    - Uterus
+    - Vagina
+    - Whole_Blood
+
+
+splicemap_tissues:
     - Adipose_Subcutaneous
     - Adipose_Visceral_Omentum
     - Adrenal_Gland
@@ -179,7 +259,7 @@ chroms:
   - 'chr20'
   - 'chr21'  
   - 'chr22'
-  - 'chrX'
+#   - 'chrX'
 
 
 absplice_training:
@@ -221,38 +301,36 @@ benchmark:
     absplice_model_params: benchmark_results/classifier={classifier}/{feature_string_dna}/abs_features={abs_features}/
     absplice_model_params_rna: benchmark_results/classifier={classifier}/{feature_string_dna}/{feature_string_rna}/abs_features={abs_features}/
     combined_benchmark: 
-        gtex_splicemaps:
-            dna: combined_benchmark/gtex_splicemaps/dna/{vcf_id}_tissue={tissue}_combined_benchmark_dna.parquet
-            rna: combined_benchmark/gtex_splicemaps/rna/tissue_cat={tissue_cat}/{vcf_id}_tissue={tissue}_combined_benchmark_rna_cat={tissue_cat}.parquet
+        dna: combined_benchmark/dna/{vcf_id}_tissue={tissue}_combined_benchmark_dna.parquet
+        rna: combined_benchmark/rna/tissue_cat={tissue_cat}/{vcf_id}_tissue={tissue}_combined_benchmark_rna_cat={tissue_cat}.parquet
                 
     performance:
-        gtex_splicemaps:
-            dna: 
-                all_tissues: 
-                    df: performance/gtex_splicemaps/dna/all_tissues/performance_all_tissues_df.csv
-                    aps: performance/gtex_splicemaps/dna/all_tissues/performance_all_tissues_aps.pkl
-                single_tissue: 
-                    df: performance/gtex_splicemaps/dna/single_tissue/performance_tissue={tissue}_df.csv
-                    aps: performance/gtex_splicemaps/dna/single_tissue/performance_tissue={tissue}_aps.pkl
-                across_tissues:
-                    boxplot_aps: performance/gtex_splicemaps/dna/across_tissues/performance_boxplot_aps.csv
-                thresholds:
-                    corresponding_thresholds: performance/gtex_splicemaps/dna/thresholds/corresponding_thresholds.csv
-                    thresholds_per_model: performance/gtex_splicemaps/dna/thresholds/thresholds_per_model.csv
-                    threshold_points_pr_curve: performance/gtex_splicemaps/dna/thresholds/threshold_points_pr_curve.csv
-            rna:
-                all_tissues: 
-                    df: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/all_tissues/performance_all_tissues_df.csv
-                    aps: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/all_tissues/performance_all_tissues_aps.pkl
-                single_tissue: 
-                    df: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/single_tissue/performance_tissue={tissue}_df.csv
-                    aps: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/single_tissue/performance_tissue={tissue}_aps.pkl
-                across_tissues:
-                    boxplot_aps: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/across_tissues/performance_boxplot_aps.csv
-                thresholds:
-                    corresponding_thresholds: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/corresponding_thresholds.csv
-                    thresholds_per_model: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/thresholds_per_model.csv
-                    threshold_points_pr_curve: performance/gtex_splicemaps/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/threshold_points_pr_curve.csv
+        dna: 
+            all_tissues: 
+                df: performance/dna/all_tissues/performance_all_tissues_df.csv
+                aps: performance/dna/all_tissues/performance_all_tissues_aps.pkl
+            single_tissue: 
+                df: performance/dna/single_tissue/performance_tissue={tissue}_df.csv
+                aps: performance/dna/single_tissue/performance_tissue={tissue}_aps.pkl
+            across_tissues:
+                boxplot_aps: performance/dna/across_tissues/performance_boxplot_aps.csv
+            thresholds:
+                corresponding_thresholds: performance/dna/thresholds/corresponding_thresholds.csv
+                thresholds_per_model: performance/dna/thresholds/thresholds_per_model.csv
+                threshold_points_pr_curve: performance/dna/thresholds/threshold_points_pr_curve.csv
+        rna:
+            all_tissues: 
+                df: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/all_tissues/performance_all_tissues_df.csv
+                aps: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/all_tissues/performance_all_tissues_aps.pkl
+            single_tissue: 
+                df: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/single_tissue/performance_tissue={tissue}_df.csv
+                aps: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/single_tissue/performance_tissue={tissue}_aps.pkl
+            across_tissues:
+                boxplot_aps: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/across_tissues/performance_boxplot_aps.csv
+            thresholds:
+                corresponding_thresholds: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/corresponding_thresholds.csv
+                thresholds_per_model: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/thresholds_per_model.csv
+                threshold_points_pr_curve: performance/rna/samples_paired/{cat_pairing}/tissue_cat={tissue_cat}/thresholds/threshold_points_pr_curve.csv
                     
                     
 benchmark_var_level:

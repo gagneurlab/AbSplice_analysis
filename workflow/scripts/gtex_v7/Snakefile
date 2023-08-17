@@ -24,16 +24,13 @@ OUTPUT_DIR_BENCHMARK = config['output_dir']['benchmark']
 
 # common snakemake rules
 # VCF annotation
-include: "../../snakemake_scripts/common/vcf_annotation/vcf_annotation.smk"
+include: "../common/vcf_annotation/snakemake_scripts/vcf_annotation.smk"
 # SpliceMap
 include: "./junction_annotation/gtex_v7_generate_gene_tpm.smk"
-include: "../../snakemake_scripts/common/junction_annotation/junction_annotation_coding_genes.smk"
-include: "../../snakemake_scripts/common/junction_annotation/junction_annotation_count_table.smk"
-include: "../../snakemake_scripts/common/junction_annotation/splicemap_train_test.smk"
-include: "../../snakemake_scripts/common/junction_annotation/splicemap_generate.smk"
+include: "../common/junction_annotation/snakemake_scripts/splicemap_generate.smk"
 
 rule all:
     input:
         rules.gtex_v7_generate_tissue_map.output,
         expand(rules.generate_splicemap.output,
-               tissue=config['gtex_tissues']),
+               tissue=config['splicemap_tissues'], genome=config['genome']),

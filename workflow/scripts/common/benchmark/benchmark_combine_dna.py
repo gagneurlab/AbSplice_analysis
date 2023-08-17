@@ -32,12 +32,8 @@ for pred_tool in pred_tools:
     df = df\
         .set_index(['gene_id', 'sample'])[params_dict[f'cols_{pred_tool}']]\
         .add_suffix(f'_{pred_tool}')
-    if 'tissue_subset' not in snakemake.params.keys(): # TODO: This is a quick fix for tissue subset. 
-        if pred_tool in tissue_specific_tools:
-            if snakemake.params['splicemaps'] == 'gtex':
-                df = df[df[f'tissue_{pred_tool}'] == snakemake.params['gtex_tissue']]
-            elif snakemake.params['splicemaps'] == 'dataset':
-                df = df[df[f'tissue_{pred_tool}'] == snakemake.params['tissue']]
+    if pred_tool in tissue_specific_tools:
+        df = df[df[f'tissue_{pred_tool}'] == snakemake.params['tissue_pred']]
     df_benchmark = df_benchmark.join(df, how='left')
     
 # save benchmark

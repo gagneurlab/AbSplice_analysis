@@ -31,14 +31,14 @@ rule benchmark_combine_rna_gtex_splicemaps_GTEx:
         outliers = OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['variant_nearest_outlier']['parts_rare_var_dist_gene_level'],
         
         spliceai = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai'],
-        spliceai_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap']['gtex_splicemaps']['all'],
-        spliceai_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap_ref_psi']['gtex_splicemaps']['all'],
-        mmsplice_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap']['gtex_splicemaps'],
-        mmsplice_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap_ref_psi']['gtex_splicemaps'],
+        spliceai_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap']['all'],
+        spliceai_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['spliceai_splicemap_ref_psi']['all'],
+        mmsplice_splicemap = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap'],
+        mmsplice_splicemap_ref_psi = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap_ref_psi'],
         absplice_dna = expand(OUTPUT_DIR_SPLICING + config['absplice_training']['preds']['dna']['gene_level'], 
                               classifier='{classifier}', feature_string='{feature_string_dna}', abs_features='{abs_features}')[0],
         
-        mmsplice_splicemap_cat = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap_cat']['gtex_splicemaps']['single_cat'],
+        mmsplice_splicemap_cat = OUTPUT_DIR + config_static['splicing_pred']['models']['mmsplice_splicemap_cat']['single_cat'],
         cat_pval = expand(OUTPUT_DIR_OUTLIER + config_static['outlier_ground_truth']['combine_gene_junction']['variant_nearest_outlier']['tissue_cat_pval'],
                           tissue='{tissue_cat}', vcf_id='{vcf_id}')[0],
         absplice_rna_single_cat = expand(OUTPUT_DIR_SPLICING + config['absplice_training']['preds']['rna']['single_cat']['gene_level'],
@@ -90,15 +90,15 @@ rule benchmark_combine_rna_gtex_splicemaps_GTEx:
         cols_cat_pval = [
             'pValueGene_g_minus_log10'],
     output:
-        combined_benchmark = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['combined_benchmark']['gtex_splicemaps']['rna'],
+        combined_benchmark = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['combined_benchmark']['rna'],
     script:
         "../benchmark_combine.py"
         
             
 rule performance_rna_all_tissues:
     input:
-        benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['combined_benchmark']['gtex_splicemaps']['rna'],
-                           vcf_id=wildcard_vcf_id, tissue=config['gtex_tissues'], tissue_cat='{tissue_cat}',
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['combined_benchmark']['rna'],
+                           vcf_id=wildcard_vcf_id, tissue=config['tissues'], tissue_cat='{tissue_cat}',
                            feature_string_dna='{feature_string_dna}', feature_string_rna='{feature_string_rna}', 
                            classifier='{classifier}', abs_features='{abs_features}'),
     resources:
@@ -110,15 +110,15 @@ rule performance_rna_all_tissues:
         median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
         gene_tpm_cutoff = config['filtering_params']['absplice']['tpm_cutoff'],
     output:
-        df_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['all_tissues']['df'],
-        aps_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['all_tissues']['aps']
+        df_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['all_tissues']['df'],
+        aps_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['all_tissues']['aps']
     script:
         "../../../../scripts/common/benchmark/performance_rna.py"
         
         
 rule performance_rna_single_tissue:
     input:
-        benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['combined_benchmark']['gtex_splicemaps']['rna'],
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['combined_benchmark']['rna'],
                            vcf_id=wildcard_vcf_id, tissue='{tissue}', tissue_cat='{tissue_cat}',
                            feature_string_dna='{feature_string_dna}', feature_string_rna='{feature_string_rna}', 
                            classifier='{classifier}', abs_features='{abs_features}'),
@@ -130,45 +130,45 @@ rule performance_rna_single_tissue:
         median_n_cutoff = config['filtering_params']['absplice']['median_n_cutoff'],
         gene_tpm_cutoff = config['filtering_params']['absplice']['tpm_cutoff'],
     output:
-        df_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['single_tissue']['df'],
-        aps_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['single_tissue']['aps']
+        df_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['single_tissue']['df'],
+        aps_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['single_tissue']['aps']
     script:
         "../../../../scripts/common/benchmark/performance_rna.py"
         
         
 rule performance_rna_across_tissues_boxplot:
     input:
-        benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['single_tissue']['aps'],
-                           tissue=config['gtex_tissues'], tissue_cat='{tissue_cat}', cat_pairing='{cat_pairing}',
+        benchmark = expand(OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['single_tissue']['aps'],
+                           tissue=config['tissues'], tissue_cat='{tissue_cat}', cat_pairing='{cat_pairing}',
                            feature_string_dna='{feature_string_dna}', feature_string_rna='{feature_string_rna}', 
                            classifier='{classifier}', abs_features='{abs_features}'),
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 64000,
     output:
-        df_performance_boxplot = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['across_tissues']['boxplot_aps'],
+        df_performance_boxplot = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['across_tissues']['boxplot_aps'],
     script:
         "../performance_across_tissues_boxplot.py"
         
         
 rule corresponding_thresholds_rna:
     input:
-        aps_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['all_tissues']['aps']
+        aps_performance = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['all_tissues']['aps']
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 64000,
     output:
-        thresholds = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['thresholds']['corresponding_thresholds'],
-        thresholds_per_model = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['thresholds']['thresholds_per_model'],
+        thresholds = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['thresholds']['corresponding_thresholds'],
+        thresholds_per_model = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['thresholds']['thresholds_per_model'],
     script:
         "../corresponding_thresholds.py"
         
         
 rule threshold_points_pr_curve_rna:
     input:
-        thresholds_per_model = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['thresholds']['thresholds_per_model'],
+        thresholds_per_model = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['thresholds']['thresholds_per_model'],
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 64000,
     output:
-        threshold_points_pr_curve = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['gtex_splicemaps']['rna']['thresholds']['threshold_points_pr_curve'],
+        threshold_points_pr_curve = OUTPUT_DIR_BENCHMARK + config['benchmark']['absplice_model_params_rna'] + config['benchmark']['performance']['rna']['thresholds']['threshold_points_pr_curve'],
     script:
         "../get_pr_for_thresholds.py"
 

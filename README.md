@@ -21,10 +21,13 @@ The main tasks of the pipeline are:
 
 # Necessary files to provide by the user
 In order for the pipeline to work users need to provide some files:
-- outlier calls from DROP. Create a symlink to the DROP results in the folder `./workflow/data/resources/{dataset}/DROP/`, where dataset can be `gtex_v8`, `mito` and `als`.
+
+- outlier calls from DROP. Create a symlink to the DROP results in the folder `./workflow/data/resources/{dataset}/DROP/`, where dataset can be `gtex_v8`, `mito` and `als`.  
+We used DROP v.1.1.2. For GTEx v8 the necessary config file to run DROP is provided in [here](https://github.com/gagneurlab/AbSplice_analysis/blob/master/workflow/data/resources/gtex_v8/DROP_config.yaml): `./workflow/data/resources/gtex_v8/DROP_config.yaml`, with the corresponding sample annotation for DROP in [here](https://github.com/gagneurlab/AbSplice_analysis/blob/master/workflow/data/resources/gtex_v8/DROP_sample_annotation.tsv): `./workflow/data/resources/gtex_v8/DROP_sample_annotation.tsv`.
+
 - rocksdb database with precomputed SpliceAI scores. Create a symlink in `./workflow/data/resources/common/{genome}/SpliceAI/spliceai.db`, where genome can be `hg19` and `hg38`. These databases can be created from: https://github.com/gagneurlab/spliceai_rocksdb.
 - rocksdb database with gnomAD minor allele frequencies. Create a symlink in `./workflow/data/resources/common/{genome}/gnomAD_maf_db/rocksdb/maf.db`, where genome can be `hg19` and `hg38`. These databases can be created from: https://github.com/gagneurlab/gnomad_rocksdb.
-- vcf files from the dataset. Store them in `./workflow/data/resources/{dataset}/vcf_normalized/{vcf_id}.vcf.gz`, where dataset can be `gtex_v8`, `mito` and `als`. `vcf_id` can be anything (e.g. sampleID or split huge vcf by chromosome to parallelize computations).
+- vcf files from the dataset. Users need to normalize the vcf files and store them in `./workflow/data/resources/{dataset}/vcf_normalized/{vcf_id}.vcf.gz`, where dataset can be `gtex_v8`, `mito` and `als`. `vcf_id` can be anything (e.g. sampleID or split huge vcf by chromosome to parallelize computations).
 
 # Figure generation
 All figures from the manuscript can be generated from the the provided scripts in [here](https://github.com/gagneurlab/AbSplice_analysis/tree/master/figures_R). The minimal dataset to produce the figures is available [here](https://zenodo.org/record/7628916). To run the scripts, first download and unzip the provided data folder to the root directory of this repository.

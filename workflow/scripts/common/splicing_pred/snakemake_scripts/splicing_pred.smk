@@ -24,7 +24,6 @@ rule splicing_pred_mtsplice:
         vcf = config['vcf'],
         fasta = config['fasta'],
         gtf = config['gtf'],
-#     conda: 'env/mtsplice_absplice.yaml' #mtsplice_absplice
     params:
         genome = config['genome'],
     resources:
@@ -42,8 +41,8 @@ rule splicing_pred_spliceai:
         db = config_precomputed['spliceai']['db'].format(
             genome=config['genome']),
         fasta = config['fasta'],
-    # conda:
-    #     '/opt/modules/i12g/anaconda/envs/spliceai_gpu'
+    conda:
+        '../../../../../envs/environment_spliceai_rocksdb.yaml'
     params:
         lookup_only = config['spliceai']['lookup_only'],
         genome = config['genome'],

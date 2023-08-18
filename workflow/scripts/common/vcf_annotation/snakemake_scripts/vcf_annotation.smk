@@ -5,6 +5,8 @@ rule vcf_annotate:
         maf = ancient(config_precomputed['gnomad']['maf_db'].format(genome=config['genome'])),
     params:
         format_fields = config['filtering_params']['vcf']['format_fields'],
+    conda:
+        '../../../../../envs/environment_gnomad_rocksdb.yaml'
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 32000,
         threads = 4

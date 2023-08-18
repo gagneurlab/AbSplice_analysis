@@ -28,6 +28,8 @@ rule fraser_outliers_unfiltered:
         tissue = '{tissue}',
         delta_psi_cutoff = config['filtering_params']['outliers']['delta_psi_cutoff'],
         outlier_type = config['filtering_params']['outliers']['outlier_type'],
+    conda:
+        '../../../../../envs/environment_FRASER.yaml'
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 265000,
         threads = 4

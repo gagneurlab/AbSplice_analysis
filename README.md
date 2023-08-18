@@ -29,6 +29,18 @@ We used DROP v.1.1.2. For GTEx v8 the necessary config file to run DROP is provi
 - rocksdb database with gnomAD minor allele frequencies. Create a symlink in `./workflow/data/resources/common/{genome}/gnomAD_maf_db/rocksdb/maf.db`, where genome can be `hg19` and `hg38`. These databases can be created from: https://github.com/gagneurlab/gnomad_rocksdb.
 - vcf files from the dataset. Users need to normalize the vcf files and store them in `./workflow/data/resources/{dataset}/vcf_normalized/{vcf_id}.vcf.gz`, where dataset can be `gtex_v8`, `mito` and `als`. `vcf_id` can be anything (e.g. sampleID or split huge vcf by chromosome to parallelize computations).
 
+# Run the pipeline
+Follow these steps to run the pipeline:
+- Install the absplice environment. Follow the steps indicated in the [absplice GitHub](https://github.com/gagneurlab/absplice/tree/master). You can use the docker image or conda environment.
+- Activate the absplice environment.
+- From the absplice environment, run the snakemake workflow for gtex_v8 (below just with 1 job; increase this depending on your available resources):
+    ```
+    cd workflow/scripts/gtex_v8
+    python -m snakemake -j 1 --use-conda
+    ```
+- Similarly run the snakemake workflow for [ALS](https://github.com/gagneurlab/AbSplice_analysis/tree/master/workflow/scripts/als). 
+- The mito dataset is not publicly available.
+
 # Figure generation
 All figures from the manuscript can be generated from the the provided scripts in [here](https://github.com/gagneurlab/AbSplice_analysis/tree/master/figures_R). The minimal dataset to produce the figures is available [here](https://zenodo.org/record/7628916). To run the scripts, first download and unzip the provided data folder to the root directory of this repository.
 

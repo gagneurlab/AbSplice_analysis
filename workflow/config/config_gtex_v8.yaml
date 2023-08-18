@@ -10,7 +10,7 @@ output_dir:
     
 DROP:
     outlier_ground_truth_all: ../../data/resources/gtex_v8/DROP/processed_results/aberrant_splicing/results/gencode29/fraser/
-    tissue_map: ../../data/results/gtex_v8/tissue_map_DROP.csv
+    tissue_map: ../../data/resources/gtex_v8/tissue_map_DROP.csv
     sample_annotation: ../../data/resources/gtex_v8/DROP/sample_annotation.tsv
     version: 'gencode34'
     splicemap:
